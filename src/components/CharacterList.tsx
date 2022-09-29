@@ -1,5 +1,6 @@
 import React, { useState, useEffect} from 'react'
 import { Character } from './Character'
+import './CharacterList.css'
 
 export type CharacterProps = {
     id: number, 
@@ -43,6 +44,7 @@ export function CharacterList() {
 
     return (
         <div>
+            <img className='logo' src={require('./Rick-And-Morty-Logo.png')} alt={'logo'}/>
             {list ? list.map(el => {
             return (
             <div style={{

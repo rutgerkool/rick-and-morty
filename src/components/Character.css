@@ -39,6 +39,11 @@ h1, p {
     padding: 10;
 }
 
+.character:hover {
+    transform: scale(1.1);
+    transition: 0.2s;
+}
+
 .character-image {
     border-top-left-radius: 25px;
     border-bottom-left-radius: 25px;
