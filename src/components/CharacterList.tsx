@@ -35,14 +35,27 @@ export function CharacterList() {
         
     }, [])
 
-    
+    let list : CharacterProps[][] = []
+
+    for (let i = 0; i < characters.length; i+=2) {
+        list.push([characters[i], characters[i+1]])
+    }
 
     return (
         <div>
-            {characters ? 
-                characters.map(el => {
-                    return <Character {...el}></Character>;
-                }) : null}
+            {list ? list.map(el => {
+            return (
+            <div style={{
+                display: 'flex',
+                justifyContent: 'center',
+                }}>
+                    <Character {...el[0]}></Character>;
+                    <Character {...el[1]}></Character>;
+                </div>
+                )})
+                 : null}
         </div>
     )
 }
+
+
