@@ -31,12 +31,13 @@ h1, p {
 
 .character {
     display: flex;
-    width: 40%;
-    height: 10%;
+    max-width: 500px;
     background-color: #484848;
     border-radius: 25px;
     margin: 15px;
-    padding: 10;
+}
+
+.character-page {
 }
 
 .character:hover {
@@ -49,3 +50,8 @@ h1, p {
     border-bottom-left-radius: 25px;
     height: 100%;
 }
+
+.navlink {
+    text-decoration: none;
+}
+

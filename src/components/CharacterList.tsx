@@ -1,5 +1,6 @@
 import React, { useState, useEffect} from 'react'
 import { Character } from './Character'
+import { Link } from 'react-router-dom'
 import './CharacterList.css'
 
 export type CharacterProps = {
@@ -36,6 +37,8 @@ export function CharacterList() {
         
     }, [])
 
+    
+
     let list : CharacterProps[][] = []
 
     for (let i = 0; i < characters.length; i+=2) {
@@ -51,8 +54,13 @@ export function CharacterList() {
                 display: 'flex',
                 justifyContent: 'center',
                 }}>
-                    <Character {...el[0]}></Character>;
-                    <Character {...el[1]}></Character>;
+                    <Link className='navlink' to={`/${el[0].id}`}>
+                        <Character {...el[0]}></Character>
+                    </Link>
+
+                    <Link className='navlink' to={`/${el[1].id}`}>
+                        <Character {...el[1]}></Character>
+                    </Link>
                 </div>
                 )})
                  : null}
