@@ -47,15 +47,37 @@ export function CharacterList() {
         <div className='page-container'>
             <img className='logo' src={require('./Rick-And-Morty-Logo.png')} alt={'logo'}/>
             <div className='filter-bar'>
-                <ButtonGroup variant='contained' aria-label='outlined primary button group'>
-                    {alphabet.map(el => <Button onClick={e => {
+                <ButtonGroup variant='contained' aria-label='outlined primary button group'
+                    sx={{
+                        width: '100%', 
+                        display: 'block', 
+                        marginLeft: 'auto',
+                        marginRight: 'auto',
+                    }} 
+                >
+                    {alphabet.map(el => 
+                    <Button onClick={e => {
                         e.preventDefault();
                         setFilterValue({filterValue: el.toLowerCase(), firstLetter: true});
-                    }}>{el}</Button>)}
+                    }}>{el}
+                    </Button>
+                    )}
                 </ButtonGroup>
             </div>
-            <div className='search-bar'>
-                <TextField fullWidth label="Search" id="fullWidth" onChange={e => {
+            <div className='search-bar' style={{
+                width: '75%',
+                display: 'block', 
+                marginLeft: 'auto',
+                marginRight: 'auto',
+                }}>
+                <TextField fullWidth sx={{
+                    width: '100%', 
+                    backgroundColor: 'lightgrey', 
+                    display: 'block', 
+                    marginLeft: 'auto',
+                    marginRight: 'auto',
+                    borderRadius: 5,
+                }}  label="Search" onChange={e => {
                     e.preventDefault();
                     setFilterValue({filterValue: e.target.value.toLowerCase(), firstLetter: false});
                 }}/>

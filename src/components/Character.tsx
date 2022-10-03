@@ -58,7 +58,7 @@ export function CharacterPage(props : {characters: CharacterProps[]}) {
                         ) : null}
                     </div>
                     <div>
-                        <Button variant='contained' href='/' >Back</Button>
+                        <Button variant='contained' href='/' sx={{width: 20}}>Back</Button>
                     </div>
             </div>
             
