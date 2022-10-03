@@ -1,12 +1,27 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import { CharacterProps } from './CharacterList'
 import './Character.css'
 import { useParams } from 'react-router-dom'
-import { Button } from '@mui/material'
+import { Button, List, ListItem } from '@mui/material'
 
 export function CharacterPage(props : {characters: CharacterProps[]}) {
     const params = useParams();
     const character = props.characters.find(el => el.id === Number(params.charId))!
+
+    const [episodes, setEpisodes] = useState<string[]>([]);
+
+    useEffect(() => {
+        async function getEpisodes() {
+            for (let i = 0; i < character.episode.length; i++) {
+                await fetch(character.episode[i]).then(response => response.json()).then(data => {
+                    setEpisodes(prevchar => prevchar.concat(data.name))
+                })
+            }
+        }
+
+        getEpisodes();
+        
+    }, [character.episode])
     
     return(
         <div>
@@ -26,18 +41,50 @@ export function CharacterPage(props : {characters: CharacterProps[]}) {
                         <p><span className={character.status === 'Alive' ? 'status-dot-alive' : 
                         (character.status === 'Dead' ? 'status-dot-dead' : 'status-dot-unknown')}></span>  {character.status} - {character.species}</p>
                         
-                        <p>Last known location: </p>
+                        <p className='subtitle'>Last known location: </p>
                         <p>{character.location.name}</p>
 
-                        <p>First seen in: </p>
-                        
-                        <p>Gender: {character.gender}</p>
+                        <p className='subtitle'>First seen in: </p>
+                        <p>{episodes[0]}</p>
 
-                        {character.type ? <p>Type: {character.type}</p> : null}
+                        <p className='subtitle'>Gender: </p>
+                        <p>{character.gender}</p>
+
+                        {character.type ? (
+                            <div>
+                                <p className='subtitle'>Type: </p>
+                                <p>{character.type}</p>
+                            </div>
+                        ) : null}
                     </div>
                     <div>
                         <Button variant='contained' href='/' >Back</Button>
                     </div>
+            </div>
+            
+            <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center', 
+            }}>
+                <div className='episode-title'>
+                    <h2>Episodes</h2>
+                </div>
+                <List className='episode-list'
+                    sx={{
+                        bgcolor: 'background.paper',
+                        overflow: 'auto',
+                        maxHeight: 300,
+                        '& ul': { padding: 0 },
+                        borderRadius: 5,
+                        backgroundColor: 'lightgrey',
+                        }}
+                    >
+                    {episodes ? episodes.map(el => {
+                        return <ListItem>{el}</ListItem>
+                    }) : null}
+                </List>
             </div>
             <div className='created-text'>
                 <p>Created: {character.created}</p>

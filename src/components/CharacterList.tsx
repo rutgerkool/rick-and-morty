@@ -2,7 +2,7 @@ import React, { useState, useEffect} from 'react'
 import { Character } from './Character'
 import { Link } from 'react-router-dom'
 import './CharacterList.css'
-import { Button, ButtonGroup } from '@mui/material'
+import { Button, ButtonGroup, TextField} from '@mui/material'
 
 export type CharacterProps = {
     id: number, 
@@ -14,13 +14,14 @@ export type CharacterProps = {
     origin : object;
     location : {name: string, url: string};
     image : string;
-    episodes : string[];
+    episode : string[];
     created: string;
 }
 
+
 export function CharacterList() {
     const [characters, setCharacters] = useState<CharacterProps[]>([]);
-    const [filterValue, setFilterValue] = useState<string>('');
+    const [{filterValue, firstLetter}, setFilterValue] = useState<{filterValue: string, firstLetter: boolean}>({filterValue: '', firstLetter: false});
 
     const alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('');
 
@@ -42,40 +43,39 @@ export function CharacterList() {
         
     }, [])
 
-    
-
-    let list : CharacterProps[][] = []
-
-    for (let i = 0; i < characters.length; i+=2) {
-        list.push([characters[i], characters[i+1]])
-    }
-
     return (
-        <div>
+        <div className='page-container'>
             <img className='logo' src={require('./Rick-And-Morty-Logo.png')} alt={'logo'}/>
             <div className='filter-bar'>
                 <ButtonGroup variant='contained' aria-label='outlined primary button group'>
                     {alphabet.map(el => <Button onClick={e => {
                         e.preventDefault();
-                        setFilterValue(el.toUpperCase());
+                        setFilterValue({filterValue: el.toLowerCase(), firstLetter: true});
                     }}>{el}</Button>)}
                 </ButtonGroup>
             </div>
-            {list ? list.map(el => {
-            if (filterValue !== '' && el[0].name[0] !== filterValue) {
-                console.log(filterValue, 'and', el[0].name)
-                return null;}
+            <div className='search-bar'>
+                <TextField fullWidth label="Search" id="fullWidth" onChange={e => {
+                    e.preventDefault();
+                    setFilterValue({filterValue: e.target.value.toLowerCase(), firstLetter: false});
+                }}/>
+            </div>
+            {characters ? characters.map(el => {
+            if (filterValue !== '' && !firstLetter) {
+                if (!el.name.toLowerCase().includes(filterValue))
+                    return null;
+            }
+            else if (filterValue !== '' && firstLetter) {
+                if (!el.name.toLowerCase().slice(0,filterValue.length).includes(filterValue)) 
+                    return null;
+            }
             return (
-                <div style={{
+                <div className='character-item' style={{
                     display: 'flex',
                     justifyContent: 'center',
                     }}>
-                        <Link className='navlink' to={`/${el[0].id}`}>
-                            <Character {...el[0]}></Character>
-                        </Link>
-    
-                        <Link className='navlink' to={`/${el[1].id}`}>
-                            <Character {...el[1]}></Character>
+                        <Link className='navlink' to={`/${el.id}`}>
+                            <Character {...el}></Character>
                         </Link>
                     </div>
                     )

@@ -1,8 +1,14 @@
 
 
-h1, p {
+h1, h2, p {
     font-family: Arial, Helvetica, sans-serif;
     color: white;
+}
+
+.episode-title {
+    display: 'flex';
+    align-items: 'center';
+    justify-content: 'center';
 }
 
 .status-dot-alive {
@@ -13,12 +19,25 @@ h1, p {
     display: inline-block;
 }
 
+.subtitle {
+    color: lightgrey;
+}
+
+.air_date {
+    color: dimgray;
+    font-style: italic;
+}
+
 .status-dot-dead {
     height: 10px;
     width: 10px;
     background-color: red;
     border-radius: 50%;
     display: inline-block;
+}
+
+.episode-list {
+    width: 50%;
 }
 
 .status-dot-unknown {
@@ -31,12 +50,15 @@ h1, p {
 
 .character {
     display: flex;
-    width: 600px;
+    width: 60em;
     background-color: #484848;
     border-radius: 25px;
     margin: 15px;
 }
 
+.created-text {
+    margin-top: 4em;
+}
 
 .character:hover {
     transform: scale(1.1);
@@ -53,7 +75,7 @@ h1, p {
     text-decoration: none;
 }
 
-.filter-bar, .created-text {
+.filter-bar, .created-text{
     display: flex;
     justify-content: center;
 }
