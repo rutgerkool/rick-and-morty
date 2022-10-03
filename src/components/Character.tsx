@@ -57,9 +57,6 @@ export function CharacterPage(props : {characters: CharacterProps[]}) {
                             </div>
                         ) : null}
                     </div>
-                    <div>
-                        <Button variant='contained' href='/' sx={{width: 20}}>Back</Button>
-                    </div>
             </div>
             
             <div style={{
@@ -79,6 +76,7 @@ export function CharacterPage(props : {characters: CharacterProps[]}) {
                         '& ul': { padding: 0 },
                         borderRadius: 5,
                         backgroundColor: 'lightgrey',
+                        fontSize: 'min(20px, 2vw)',
                         }}
                     >
                     {episodes ? episodes.map(el => {
@@ -88,6 +86,12 @@ export function CharacterPage(props : {characters: CharacterProps[]}) {
             </div>
             <div className='created-text'>
                 <p>Created: {character.created}</p>
+            </div>
+            <div className='back-button'>
+                <Button variant='contained' href='/' size='small'
+                        sx={{
+                            width: '2vw',
+                        }}>Back</Button>
             </div>
         </div>
     )

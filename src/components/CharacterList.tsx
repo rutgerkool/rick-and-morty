@@ -56,7 +56,11 @@ export function CharacterList() {
                     }} 
                 >
                     {alphabet.map(el => 
-                    <Button onClick={e => {
+                    <Button size='small'
+                        sx={{
+                            width: '2vw',
+                        }}
+                    onClick={e => {
                         e.preventDefault();
                         setFilterValue({filterValue: el.toLowerCase(), firstLetter: true});
                     }}>{el}
