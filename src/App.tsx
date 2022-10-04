@@ -1,8 +1,7 @@
-import React from 'react';
-import {CharacterList, CharacterProps} from './components/CharacterList'
+import { CharacterUI, CharacterProps } from './components/CharacterUI'
 import { Routes, Route} from 'react-router-dom'
-import {  CharacterPage } from './components/Character';
-import {useState, useEffect} from 'react'
+import { CharacterPage } from './components/CharacterPage'
+import { useState, useEffect } from 'react'
 
 function App() {
   const [characters, setCharacters] = useState<CharacterProps[]>([]);
@@ -29,7 +28,7 @@ function App() {
     <div className="App">
       <Routes>
         <Route path={'/'} element={
-          <CharacterList></CharacterList>
+          <CharacterUI></CharacterUI>
         }/>
         {characters !== undefined && characters.length > 0 ? (
           <Route path={'/:charId'} element={
