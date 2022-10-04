@@ -34,8 +34,9 @@ function EpisodeList(props: EpisodeProps) {
                     fontSize: 'min(20px, 2vw)',
                     }}
                 >
-                {props.episodes ? props.episodes.map(el => {
-                    return <ListItem key={el}>{el}</ListItem>
+                {props.episodes ? props.episodes.map((el, i) => {
+                    console.log('inmap',props.episodes);
+                    return <ListItem key={i}>{el}</ListItem>
                 }) : null}
             </List>
         </div>
@@ -73,6 +74,7 @@ export function CharacterPage(props : {characters: CharacterProps[]}) {
     const [episodes, setEpisodes] = useState<string[]>([]);
 
     useEffect(() => {
+        console.log(character.episode)
         async function getEpisodes() {
             for (let i = 0; i < character.episode.length; i++) {
                 await fetch(character.episode[i]).then(response => response.json()).then(data => {
