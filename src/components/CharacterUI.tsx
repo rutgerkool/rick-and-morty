@@ -4,7 +4,7 @@ import { FilterBar, SearchBar } from './UIComonents'
 import { CharacterList } from './CharacterList'
 
 export type CharacterProps = {
-    id: number, 
+    id: number,
     name:string,
     status: string,
     species : string;
@@ -17,24 +17,22 @@ export type CharacterProps = {
     created: string;
 }
 
-export function CharacterUI() {
-    const [{filterValue, firstLetter}, setFilterValue] = useState<{filterValue: string, firstLetter: boolean}>({filterValue: '', firstLetter: false});
+export function CharacterUI () {
+  const [{ filterValue, firstLetter }, setFilterValue] = useState<{filterValue: string, firstLetter: boolean}>({ filterValue: '', firstLetter: false })
 
-    return (
+  return (
         <div className='page-container'>
-            <img 
-                className='logo' 
-                src={require('../pictures/Rick-And-Morty-Logo.png')} 
+            <img
+                className='logo'
+                src={require('../pictures/Rick-And-Morty-Logo.png')}
                 alt={'logo'}
             />
             <FilterBar setFilterValue={setFilterValue} />
             <SearchBar setFilterValue={setFilterValue} />
-            <CharacterList 
+            <CharacterList
                 filterValue={filterValue}
                 firstLetter={firstLetter}
             />
         </div>
-    )
+  )
 }
-
-
