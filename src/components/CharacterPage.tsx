@@ -35,7 +35,6 @@ function EpisodeList(props: EpisodeProps) {
                     }}
                 >
                 {props.episodes ? props.episodes.map((el, i) => {
-                    console.log('inmap',props.episodes);
                     return <ListItem key={i}>{el}</ListItem>
                 }) : null}
             </List>
@@ -67,41 +66,52 @@ function CharacterPageInfo(props : CharacterPageProps) {
     )
 }
 
-export function CharacterPage(props : {characters: CharacterProps[]}) {
+export function CharacterPage() {
     const params = useParams();
-    const character = props.characters.find(el => el.id === Number(params.charId))!
+    const [character, setCharacter] = useState<CharacterProps|null>(null);
 
     const [episodes, setEpisodes] = useState<string[]>([]);
 
     useEffect(() => {
-        console.log(character.episode)
+        const url=`https://rickandmortyapi.com/api/character/${params.charId}`;
+        fetch(url).then(response => response.json()).then(data => {
+            setCharacter(data);
+        })
+    }, [])
+
+    useEffect(() => {
         async function getEpisodes() {
-            for (let i = 0; i < character.episode.length; i++) {
-                await fetch(character.episode[i]).then(response => response.json()).then(data => {
-                    setEpisodes(prevchar => prevchar.concat(data.name))
-                })
+            if (character) {
+                for (let i = 0; i < character.episode.length; i++) {
+                    await fetch(character.episode[i]).then(response => response.json()).then(data => {
+                        setEpisodes(prevchar => prevchar.concat(data.name))
+                    })
+                }
             }
         }
 
         getEpisodes();
-        
-    }, [character.episode])
+    }, [character])
     
     return(
         <div>
-            <div className='character-page' style={{
-                ...listStyles      
-            }}>
-                <div>
-                    <img src={character.image} alt={character.name}/>
-                </div> 
-                <CharacterPageInfo character={character} episodes={episodes}/>
-            </div>
-            <EpisodeList episodes={episodes}/>
-            <div className='created-text'>
-                <p>Created: {character.created}</p>
-            </div>
-            <BackButton />
-        </div>
+        {character ? (
+            <>
+                <div className='character-page' style={{
+                    ...listStyles      
+                }}>
+                    <div>
+                        <img src={character.image} alt={character.name}/>
+                    </div> 
+                    <CharacterPageInfo character={character} episodes={episodes}/>
+                </div>
+                <EpisodeList episodes={episodes}/>
+                <div className='created-text'>
+                    <p>Created: {character.created}</p>
+                </div>
+                <BackButton />
+            </>
+        ) : null}
+    </div>
     )
 }

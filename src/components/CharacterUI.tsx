@@ -17,7 +17,7 @@ export type CharacterProps = {
     created: string;
 }
 
-export function CharacterUI(props : {characters : CharacterProps[]}) {
+export function CharacterUI() {
     const [{filterValue, firstLetter}, setFilterValue] = useState<{filterValue: string, firstLetter: boolean}>({filterValue: '', firstLetter: false});
 
     return (
@@ -30,7 +30,6 @@ export function CharacterUI(props : {characters : CharacterProps[]}) {
             <FilterBar setFilterValue={setFilterValue} />
             <SearchBar setFilterValue={setFilterValue} />
             <CharacterList 
-                characters={props.characters}
                 filterValue={filterValue}
                 firstLetter={firstLetter}
             />
