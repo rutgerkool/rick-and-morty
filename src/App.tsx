@@ -1,4 +1,4 @@
-import { CharacterUI, CharacterProps } from './components/CharacterUI'
+import { CharacterUI } from './components/CharacterUI'
 import { Routes, Route } from 'react-router-dom'
 import { CharacterPage } from './components/CharacterPage'
 
