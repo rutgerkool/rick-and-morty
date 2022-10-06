@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
 import { List, ListItem } from '@mui/material'
 import { BackButton } from './UIComonents'
 import { CharacterProps } from './CharacterUI'
@@ -72,6 +72,7 @@ function CharacterPageInfo (props : CharacterPageProps) {
 
 export function CharacterPage () {
   const params = useParams()
+  const navigate = useNavigate()
   const [character, setCharacter] = useState<CharacterProps|null>(null)
 
   const [episodes, setEpisodes] = useState<string[]>([])
@@ -79,7 +80,7 @@ export function CharacterPage () {
   useEffect(() => {
     const url = `https://rickandmortyapi.com/api/character/${params.charId}`
     fetch(url).then(response => response.json()).then(data => {
-      setCharacter(data)
+      data && data.id ? setCharacter(data) : navigate('/notFound')
     })
   }, [])
 

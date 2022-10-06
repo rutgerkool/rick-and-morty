@@ -40,8 +40,8 @@ export function CharacterList (props : ListProps) {
         <div>
             {characters && characters.length > 1 && !loading
               ? characters.map(el => {
-                const character : boolean = filterItem(el, props)
-                if (!character) return null
+                const isCharacter : boolean = filterItem(el, props)
+                if (!isCharacter) return null
                 return (
                     <div
                         key={el.id}

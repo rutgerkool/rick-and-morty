@@ -4,7 +4,7 @@ async function getCharacters () {
   const data = await initialResponse.json()
 
   const characters = []
-  for (let i = 0; i <= data.info.pages; i++) {
+  for (let i = 1; i <= data.info.pages; i++) {
     const charactersResponse = await fetch(`https://rickandmortyapi.com/api/character/?page=${i}`)
     const partialCharacters = await charactersResponse.json()
     characters.push(...partialCharacters.results)

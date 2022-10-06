@@ -10,6 +10,10 @@ function App () {
           <CharacterUI />
         }/>
 
+        <Route path={'/notFound'} element={
+          <p>Page not found</p>
+        }/>
+
         <Route path={'/:charId'} element={
           <CharacterPage/>
         }/>
@@ -17,6 +21,7 @@ function App () {
         <Route path={'*'} element={
           <p>Page not found</p>
         }/>
+
       </Routes>
     </div>
   )
