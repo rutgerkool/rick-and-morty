@@ -4,6 +4,7 @@ import { List, ListItem } from '@mui/material'
 import { BackButton } from './UIComonents'
 import { CharacterProps } from './CharacterUI'
 import { listStyles, CharacterCardInfo } from './Character'
+import { Api } from '../utils/api'
 
 type CharacterPageProps = {
     character: CharacterProps;
@@ -85,23 +86,21 @@ export function CharacterPage () {
   }, [])
 
   useEffect(() => {
-    async function getEpisodes () {
-      if (character) {
-        for (let i = 0; i < character.episode.length; i++) {
-          await fetch(character.episode[i]).then(response => response.json()).then(data => {
-            setEpisodes(prevchar => prevchar.concat(data.name))
-          })
-        }
+    const fetchEpisodes = async () => {
+      try {
+        const episodes = await Api.getEpisodes(character)
+        setEpisodes(episodes)
+      } catch (error) {
+        console.log(`Error: ${error}`)
       }
     }
-
-    getEpisodes()
+    fetchEpisodes()
   }, [character])
+
+  if (!character) return null
 
   return (
         <div>
-        {character
-          ? (
             <>
                 <div className='character-page' style={{
                   ...listStyles
@@ -117,8 +116,7 @@ export function CharacterPage () {
                 </div>
                 <BackButton />
             </>
-            )
-          : null}
+
     </div>
   )
 }
