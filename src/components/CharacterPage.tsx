@@ -1,9 +1,10 @@
-import React, {useState, useEffect} from 'react'
-import { useParams } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
 import { List, ListItem } from '@mui/material'
 import { BackButton } from './UIComonents'
 import { CharacterProps } from './CharacterUI'
 import { listStyles, CharacterCardInfo } from './Character'
+import { Api } from '../utils/api'
 
 type CharacterPageProps = {
     character: CharacterProps;
@@ -14,39 +15,41 @@ type EpisodeProps = {
     episodes : string[];
 }
 
-function EpisodeList(props: EpisodeProps) {
-    return (
+function EpisodeList (props: EpisodeProps) {
+  return (
         <div style={{
-            flexDirection: 'column',
-            ...listStyles
+          flexDirection: 'column',
+          ...listStyles
         }}>
             <div className='episode-title'>
                 <h2>Episodes</h2>
             </div>
             <List className='episode-list'
                 sx={{
-                    bgcolor: 'background.paper',
-                    overflow: 'auto',
-                    maxHeight: 300,
-                    '& ul': { padding: 0 },
-                    borderRadius: 5,
-                    backgroundColor: 'lightgrey',
-                    fontSize: 'min(20px, 2vw)',
-                    }}
+                  bgcolor: 'background.paper',
+                  overflow: 'auto',
+                  maxHeight: 300,
+                  '& ul': { padding: 0 },
+                  borderRadius: 5,
+                  backgroundColor: 'lightgrey',
+                  fontSize: 'min(20px, 2vw)'
+                }}
                 >
-                {props.episodes ? props.episodes.map((el, i) => {
+                {props.episodes
+                  ? props.episodes.map((el, i) => {
                     return <ListItem key={i}>{el}</ListItem>
-                }) : null}
+                  })
+                  : null}
             </List>
         </div>
-    )
+  )
 }
 
-function CharacterPageInfo(props : CharacterPageProps) {
-    return (
+function CharacterPageInfo (props : CharacterPageProps) {
+  return (
         <div style={{
-            margin: 10,
-            padding: 10,
+          margin: 10,
+          padding: 10
         }}>
             <CharacterCardInfo character={props.character}/>
 
@@ -56,53 +59,55 @@ function CharacterPageInfo(props : CharacterPageProps) {
             <p className='subtitle'>Gender: </p>
             <p>{props.character.gender}</p>
 
-            {props.character.type ? (
+            {props.character.type
+              ? (
                 <div>
                     <p className='subtitle'>Type: </p>
                     <p>{props.character.type}</p>
                 </div>
-            ) : null}
+                )
+              : null}
         </div>
-    )
+  )
 }
 
-export function CharacterPage() {
-    const params = useParams();
-    const [character, setCharacter] = useState<CharacterProps|null>(null);
+export function CharacterPage () {
+  const params = useParams()
+  const navigate = useNavigate()
+  const [character, setCharacter] = useState<CharacterProps|null>(null)
 
-    const [episodes, setEpisodes] = useState<string[]>([]);
+  const [episodes, setEpisodes] = useState<string[]>([])
 
-    useEffect(() => {
-        const url=`https://rickandmortyapi.com/api/character/${params.charId}`;
-        fetch(url).then(response => response.json()).then(data => {
-            setCharacter(data);
-        })
-    }, [])
+  useEffect(() => {
+    const url = `https://rickandmortyapi.com/api/character/${params.charId}`
+    fetch(url).then(response => response.json()).then(data => {
+      data && data.id ? setCharacter(data) : navigate('/notFound')
+    })
+  }, [])
 
-    useEffect(() => {
-        async function getEpisodes() {
-            if (character) {
-                for (let i = 0; i < character.episode.length; i++) {
-                    await fetch(character.episode[i]).then(response => response.json()).then(data => {
-                        setEpisodes(prevchar => prevchar.concat(data.name))
-                    })
-                }
-            }
-        }
+  useEffect(() => {
+    const fetchEpisodes = async () => {
+      try {
+        const episodes = await Api.getEpisodes(character)
+        setEpisodes(episodes)
+      } catch (error) {
+        console.log(`Error: ${error}`)
+      }
+    }
+    fetchEpisodes()
+  }, [character])
 
-        getEpisodes();
-    }, [character])
-    
-    return(
+  if (!character) return null
+
+  return (
         <div>
-        {character ? (
             <>
                 <div className='character-page' style={{
-                    ...listStyles      
+                  ...listStyles
                 }}>
                     <div>
                         <img src={character.image} alt={character.name}/>
-                    </div> 
+                    </div>
                     <CharacterPageInfo character={character} episodes={episodes}/>
                 </div>
                 <EpisodeList episodes={episodes}/>
@@ -111,7 +116,7 @@ export function CharacterPage() {
                 </div>
                 <BackButton />
             </>
-        ) : null}
+
     </div>
-    )
+  )
 }
