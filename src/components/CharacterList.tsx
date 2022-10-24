@@ -3,6 +3,8 @@ import { CharacterProps } from './CharacterUI'
 import { CharacterCard } from './Character'
 import { Link } from 'react-router-dom'
 import { Api } from '../utils/api'
+import { useAppSelector, useAppDispatch } from '../utils/hooks'
+import { setCharacters, selectCharacters } from './CharacterSlice'
 
 type ListProps = {
     filterValue : string;
@@ -19,7 +21,8 @@ export function filterItem (el : CharacterProps, props : ListProps) : boolean {
 }
 
 export function CharacterList (props : ListProps) {
-  const [characters, setCharacters] = useState<CharacterProps[]>([])
+  const characters: CharacterProps[] = useAppSelector(selectCharacters)
+  const dispatch = useAppDispatch()
   const [loading, setLoading] = useState<boolean>(false)
 
   useEffect(() => {
@@ -27,7 +30,7 @@ export function CharacterList (props : ListProps) {
       try {
         setLoading(true)
         const characters = await Api.getCharacters()
-        setCharacters(characters)
+        dispatch(setCharacters(characters))
         setLoading(false)
       } catch (error) {
         console.log(`Error: ${error}`)
