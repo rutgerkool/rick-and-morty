@@ -37,7 +37,7 @@ export function CharacterList (props : ListProps) {
       }
     }
     fetchData()
-  }, [])
+  }, [dispatch])
 
   return (
         <div>

@@ -83,7 +83,7 @@ export function CharacterPage () {
     fetch(url).then(response => response.json()).then(data => {
       data && data.id ? setCharacter(data) : navigate('/notFound')
     })
-  }, [])
+  }, [navigate, params.charId])
 
   useEffect(() => {
     const fetchEpisodes = async () => {
