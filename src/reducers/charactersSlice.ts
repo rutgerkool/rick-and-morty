@@ -6,11 +6,11 @@ import { CharactersType } from '../components/CharacterUI'
 // pending: characters/getCharacters/pending
 // fulfilled: characters/getCharacters/fulfilled
 // rejected: characters/getCharacters/rejected
-const getCharacters = createAsyncThunk(
+export const getCharacters = createAsyncThunk(
   // action type string
   'characters/getCharacters',
   // callback function
-  async () => await Api.getCharacters()
+  async (thunkAPI) => await Api.getCharacters()
 )
 
 type initialStateType = {
