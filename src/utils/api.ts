@@ -14,7 +14,7 @@ const getCharacters = async (): Promise<CharactersType[]> => {
   return characters
 }
 
-const getEpisodes = async (character: CharactersType | null) => {
+const getEpisodes = async (character: CharactersType | null): Promise<string[]> => {
   const episodes: string[] = []
   if (character) {
     for (let i = 0; i < character.episode.length; i++) {
