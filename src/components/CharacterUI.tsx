@@ -3,7 +3,7 @@ import '../styles/CharacterList.css'
 import { FilterBar, SearchBar } from './UIComonents'
 import { CharacterList } from './CharacterList'
 
-export type CharacterProps = {
+export type CharactersType = {
     id: number,
     name:string,
     status: string,

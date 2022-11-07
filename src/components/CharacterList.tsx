@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { CharacterProps } from './CharacterUI'
+import { CharactersType } from './CharacterUI'
 import { CharacterCard } from './Character'
 import { Link } from 'react-router-dom'
 import { Api } from '../utils/api'
@@ -9,7 +9,7 @@ type ListProps = {
     firstLetter : boolean;
 }
 
-export function filterItem (el : CharacterProps, props : ListProps) : boolean {
+export function filterItem (el : CharactersType, props : ListProps) : boolean {
   if (props.filterValue !== '' && !props.firstLetter) {
     if (!el.name.toLowerCase().includes(props.filterValue)) { return false }
   } else if (props.filterValue !== '' && props.firstLetter) {
@@ -19,7 +19,7 @@ export function filterItem (el : CharacterProps, props : ListProps) : boolean {
 }
 
 export function CharacterList (props : ListProps) {
-  const [characters, setCharacters] = useState<CharacterProps[]>([])
+  const [characters, setCharacters] = useState<CharactersType[]>([])
   const [loading, setLoading] = useState<boolean>(false)
 
   useEffect(() => {

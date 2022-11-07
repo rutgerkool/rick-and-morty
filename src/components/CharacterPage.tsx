@@ -2,12 +2,12 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { List, ListItem } from '@mui/material'
 import { BackButton } from './UIComonents'
-import { CharacterProps } from './CharacterUI'
+import { CharactersType } from './CharacterUI'
 import { listStyles, CharacterCardInfo } from './Character'
 import { Api } from '../utils/api'
 
 type CharacterPageProps = {
-    character: CharacterProps;
+    character: CharactersType;
     episodes : string[];
 }
 
@@ -74,7 +74,7 @@ function CharacterPageInfo (props : CharacterPageProps) {
 export function CharacterPage () {
   const params = useParams()
   const navigate = useNavigate()
-  const [character, setCharacter] = useState<CharacterProps|null>(null)
+  const [character, setCharacter] = useState<CharactersType|null>(null)
 
   const [episodes, setEpisodes] = useState<string[]>([])
 

@@ -1,6 +1,6 @@
-import { CharacterProps } from '../components/CharacterUI'
+import { CharactersType } from '../components/CharacterUI'
 
-async function getCharacters () {
+const getCharacters = async (): Promise<CharactersType[]> => {
   const url = 'https://rickandmortyapi.com/api/character/'
   const initialResponse = await fetch(url)
   const data = await initialResponse.json()
@@ -14,7 +14,7 @@ async function getCharacters () {
   return characters
 }
 
-async function getEpisodes (character: CharacterProps | null) {
+const getEpisodes = async (character: CharactersType | null) => {
   const episodes: string[] = []
   if (character) {
     for (let i = 0; i < character.episode.length; i++) {

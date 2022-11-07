@@ -1,8 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit'
-import counterReducer from './reducers/counterSlice'
+import charactersReducer from './reducers/charactersSlice'
+import thunk from 'redux-thunk'
 
-console.log(process.env.NODE_ENV)
+// const middleware = [thunk]
+
 export default configureStore({
-  reducer: counterReducer,
+  reducer: charactersReducer,
   devTools: (process.env.NODE_ENV === 'development')
+  // middleware
 })
