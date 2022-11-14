@@ -1,4 +1,4 @@
-import { CharacterProps } from './CharacterUI'
+import { CharactersType } from './CharacterUI'
 import '../styles/Character.css'
 
 export const listStyles = {
@@ -7,7 +7,7 @@ export const listStyles = {
   justifyContent: 'center'
 }
 
-export function CharacterCardInfo (props : {character : CharacterProps}) {
+export function CharacterCardInfo (props : {character : CharactersType}) {
   return (
         <div>
             <h1>{props.character.name}</h1>
@@ -26,7 +26,7 @@ export function CharacterCardInfo (props : {character : CharacterProps}) {
   )
 }
 
-export function CharacterCard (props : CharacterProps) {
+export function CharacterCard (props : CharactersType) {
   return (
         <div className='character'>
                 <div>
