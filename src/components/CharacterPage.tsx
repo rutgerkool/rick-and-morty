@@ -1,12 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { List, ListItem } from '@mui/material'
 import { BackButton } from './UIComonents'
 import { CharactersType } from './CharacterUI'
 import { listStyles, CharacterCardInfo } from './Character'
-import { Api } from '../utils/api'
 import { useAppDispatch, useAppSelector } from '../hooks/reduxHooks'
-import { getCharacter } from '../reducers/charactersSlice'
+import { getCharacter, getEpisodes } from '../reducers/charactersSlice'
 
 type CharacterPageProps = {
     character: CharactersType;
@@ -78,30 +77,22 @@ export function CharacterPage () {
   const characterFromStore = useAppSelector(state => state.characters.entity)
   const characterLoadingFromStore = useAppSelector(state => state.characters.loading)
   const characterRejectedFromStore = useAppSelector(state => state.characters.error)
+  const episodesFromStore = useAppSelector(state => state.characters.episodes)
+  const episodesLoadingFromStore = useAppSelector(state => state.characters.episodesLoading)
   const params = useParams()
   const navigate = useNavigate()
-
-  const [episodes, setEpisodes] = useState<string[]>([])
 
   useEffect(() => {
     if (params.charId) dispatch(getCharacter(params.charId))
   }, [])
 
   useEffect(() => {
-    const fetchEpisodes = async () => {
-      try {
-        const episodes = await Api.getEpisodes(characterFromStore[0])
-        setEpisodes(episodes)
-      } catch (error) {
-        console.log(`Error: ${error}`)
-      }
-    }
-    if (characterLoadingFromStore || characterFromStore.length === 0) fetchEpisodes()
-  }, [])
+    if (!characterLoadingFromStore && characterFromStore.length !== 0) dispatch(getEpisodes(characterFromStore[0]))
+  }, [characterLoadingFromStore])
 
   if (characterRejectedFromStore) navigate('/notFound')
 
-  if (characterLoadingFromStore || characterFromStore.length === 0) return <p>Loading...</p>
+  if (characterLoadingFromStore || characterFromStore.length === 0 || episodesLoadingFromStore || episodesFromStore.length === 0) return <p>Loading...</p>
   else {
     return (
       <div>
@@ -112,9 +103,9 @@ export function CharacterPage () {
                   <div>
                       <img src={characterFromStore[0].image} alt={characterFromStore[0].name}/>
                   </div>
-                  <CharacterPageInfo character={characterFromStore[0]} episodes={episodes}/>
+                  <CharacterPageInfo character={characterFromStore[0]} episodes={episodesFromStore}/>
               </div>
-              <EpisodeList episodes={episodes}/>
+              <EpisodeList episodes={episodesFromStore}/>
               <div className='created-text'>
                   <p>Created: {characterFromStore[0].created}</p>
               </div>

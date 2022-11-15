@@ -18,17 +18,26 @@ export const getCharacter = createAsyncThunk(
   async (characterID: string) => await Api.getCharacter(characterID)
 )
 
+export const getEpisodes = createAsyncThunk(
+  'characters/getEpisodes',
+  async (character: CharactersType) => await Api.getEpisodes(character)
+)
+
 type initialStateType = {
   entity: CharactersType[],
+  episodes: string[],
   entities: CharactersType[]
   loading: boolean
+  episodesLoading: boolean
   error: boolean
 }
 
 const initialState: initialStateType = {
   entity: [],
+  episodes: [],
   entities: [],
   loading: false,
+  episodesLoading: false,
   error: false
 }
 
@@ -47,7 +56,7 @@ export const charactersSlice = createSlice({
       state.entities = action.payload
     })
     // TODO add error handling
-    builder.addCase(getCharacters.rejected, (state, action) => {
+    builder.addCase(getCharacters.rejected, (state) => {
       state.loading = true
     })
     builder.addCase(getCharacter.pending, (state) => {
@@ -61,8 +70,23 @@ export const charactersSlice = createSlice({
       state.error = false
     })
     // TODO add error handling
-    builder.addCase(getCharacter.rejected, (state, action) => {
+    builder.addCase(getCharacter.rejected, (state) => {
       state.loading = true
+      state.error = true
+    })
+    builder.addCase(getEpisodes.pending, (state) => {
+      // both `state` and `action` are now correctly typed
+      // based on the slice state and the `pending` action creator
+      state.episodesLoading = true
+    })
+    builder.addCase(getEpisodes.fulfilled, (state, action) => {
+      state.episodesLoading = false
+      state.episodes = action.payload
+      state.error = false
+    })
+    // TODO add error handling
+    builder.addCase(getEpisodes.rejected, (state) => {
+      state.episodesLoading = true
       state.error = true
     })
   }
