@@ -14,6 +14,13 @@ const getCharacters = async (): Promise<CharactersType[]> => {
   return characters
 }
 
+const getCharacter = async (characterID: string): Promise<CharactersType[]> => {
+  const characterResponse = await fetch(`https://rickandmortyapi.com/api/character/${characterID}`)
+  const character = await characterResponse.json()
+
+  return [character]
+}
+
 const getEpisodes = async (character: CharactersType | null): Promise<string[]> => {
   const episodes: string[] = []
   if (character) {
@@ -28,5 +35,6 @@ const getEpisodes = async (character: CharactersType | null): Promise<string[]> 
 
 export const Api = {
   getCharacters,
+  getCharacter,
   getEpisodes
 }

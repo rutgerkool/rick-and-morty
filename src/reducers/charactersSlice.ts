@@ -13,14 +13,23 @@ export const getCharacters = createAsyncThunk(
   async (thunkAPI) => await Api.getCharacters()
 )
 
+export const getCharacter = createAsyncThunk(
+  'characters/getCharacter',
+  async (characterID: string) => await Api.getCharacter(characterID)
+)
+
 type initialStateType = {
+  entity: CharactersType[],
   entities: CharactersType[]
   loading: boolean
+  error: boolean
 }
 
 const initialState: initialStateType = {
+  entity: [],
   entities: [],
-  loading: false
+  loading: false,
+  error: false
 }
 
 export const charactersSlice = createSlice({
@@ -40,6 +49,21 @@ export const charactersSlice = createSlice({
     // TODO add error handling
     builder.addCase(getCharacters.rejected, (state, action) => {
       state.loading = true
+    })
+    builder.addCase(getCharacter.pending, (state) => {
+      // both `state` and `action` are now correctly typed
+      // based on the slice state and the `pending` action creator
+      state.loading = true
+    })
+    builder.addCase(getCharacter.fulfilled, (state, action) => {
+      state.loading = false
+      state.entity = action.payload
+      state.error = false
+    })
+    // TODO add error handling
+    builder.addCase(getCharacter.rejected, (state, action) => {
+      state.loading = true
+      state.error = true
     })
   }
 

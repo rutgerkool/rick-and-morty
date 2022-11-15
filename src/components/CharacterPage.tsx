@@ -5,6 +5,8 @@ import { BackButton } from './UIComonents'
 import { CharactersType } from './CharacterUI'
 import { listStyles, CharacterCardInfo } from './Character'
 import { Api } from '../utils/api'
+import { useAppDispatch, useAppSelector } from '../hooks/reduxHooks'
+import { getCharacter } from '../reducers/charactersSlice'
 
 type CharacterPageProps = {
     character: CharactersType;
@@ -72,51 +74,54 @@ function CharacterPageInfo (props : CharacterPageProps) {
 }
 
 export function CharacterPage () {
+  const dispatch = useAppDispatch()
+  const characterFromStore = useAppSelector(state => state.characters.entity)
+  const characterLoadingFromStore = useAppSelector(state => state.characters.loading)
+  const characterRejectedFromStore = useAppSelector(state => state.characters.error)
   const params = useParams()
   const navigate = useNavigate()
-  const [character, setCharacter] = useState<CharactersType|null>(null)
 
   const [episodes, setEpisodes] = useState<string[]>([])
 
   useEffect(() => {
-    const url = `https://rickandmortyapi.com/api/character/${params.charId}`
-    fetch(url).then(response => response.json()).then(data => {
-      data && data.id ? setCharacter(data) : navigate('/notFound')
-    })
+    if (params.charId) dispatch(getCharacter(params.charId))
   }, [])
 
   useEffect(() => {
     const fetchEpisodes = async () => {
       try {
-        const episodes = await Api.getEpisodes(character)
+        const episodes = await Api.getEpisodes(characterFromStore[0])
         setEpisodes(episodes)
       } catch (error) {
         console.log(`Error: ${error}`)
       }
     }
-    fetchEpisodes()
-  }, [character])
+    if (characterLoadingFromStore || characterFromStore.length === 0) fetchEpisodes()
+  }, [])
 
-  if (!character) return null
+  if (characterRejectedFromStore) navigate('/notFound')
 
-  return (
-        <div>
-            <>
-                <div className='character-page' style={{
-                  ...listStyles
-                }}>
-                    <div>
-                        <img src={character.image} alt={character.name}/>
-                    </div>
-                    <CharacterPageInfo character={character} episodes={episodes}/>
-                </div>
-                <EpisodeList episodes={episodes}/>
-                <div className='created-text'>
-                    <p>Created: {character.created}</p>
-                </div>
-                <BackButton />
-            </>
+  if (characterLoadingFromStore || characterFromStore.length === 0) return <p>Loading...</p>
+  else {
+    return (
+      <div>
+          <>
+              <div className='character-page' style={{
+                ...listStyles
+              }}>
+                  <div>
+                      <img src={characterFromStore[0].image} alt={characterFromStore[0].name}/>
+                  </div>
+                  <CharacterPageInfo character={characterFromStore[0]} episodes={episodes}/>
+              </div>
+              <EpisodeList episodes={episodes}/>
+              <div className='created-text'>
+                  <p>Created: {characterFromStore[0].created}</p>
+              </div>
+              <BackButton />
+          </>
 
-    </div>
-  )
+  </div>
+    )
+  }
 }
