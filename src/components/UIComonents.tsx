@@ -13,6 +13,11 @@ type FilterProps = {
             filterValue: string;
             firstLetter: boolean;
         }>>
+    setPageNumber:
+      React.Dispatch<React.SetStateAction<{
+        pageNumber: number
+  }>>
+  numberOfPages: number
 }
 
 export function BackButton () {
@@ -33,7 +38,8 @@ export function BackButton () {
 }
 
 export function FilterBar (props : FilterProps) {
-  const alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('')
+  const alphabet = []
+  for (let i = 1; i <= props.numberOfPages; i++) alphabet.push(i)
 
   return (
         <div className='filter-bar'>
@@ -53,8 +59,8 @@ export function FilterBar (props : FilterProps) {
                         }}
                         onClick={e => {
                           e.preventDefault()
-                          props.setFilterValue({ filterValue: el.toLowerCase(), firstLetter: true })
-                        }}>{el}
+                          props.setPageNumber({ pageNumber: el })
+                        }}>{el.toString()}
                     </Button>
                 )}
             </ButtonGroup>

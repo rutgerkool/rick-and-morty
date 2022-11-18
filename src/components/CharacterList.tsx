@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { CharactersType } from './CharacterUI'
 import { CharacterCard } from './Character'
 import { Link } from 'react-router-dom'
@@ -6,8 +6,10 @@ import { getCharacters } from '../reducers/charactersSlice'
 import { useAppDispatch, useAppSelector } from '../hooks/reduxHooks'
 
 type ListProps = {
-    filterValue : string;
-    firstLetter : boolean;
+    filterValue : string
+    firstLetter : boolean
+    numberOfPages : number
+    pageNumber: number
 }
 
 export function filterItem (el : CharactersType, props : ListProps) : boolean {
@@ -25,8 +27,8 @@ export function CharacterList (props : ListProps) {
   const charactersLoadingFromStore = useAppSelector(state => state.characters.loading)
 
   useEffect(() => {
-    dispatch(getCharacters())
-  }, [])
+    dispatch(getCharacters(props.pageNumber))
+  }, [props.pageNumber])
 
   if (charactersLoadingFromStore) return <p>Loading...</p>
 

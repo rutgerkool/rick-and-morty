@@ -6,11 +6,16 @@ import { CharactersType } from '../components/CharacterUI'
 // pending: characters/getCharacters/pending
 // fulfilled: characters/getCharacters/fulfilled
 // rejected: characters/getCharacters/rejected
+export const getPages = createAsyncThunk(
+  'characters/getPages',
+  async () => await Api.getPages()
+)
+
 export const getCharacters = createAsyncThunk(
   // action type string
   'characters/getCharacters',
   // callback function
-  async (thunkAPI) => await Api.getCharacters()
+  async (pageNumber: number) => await Api.getCharacters(pageNumber)
 )
 
 export const getCharacter = createAsyncThunk(
@@ -30,6 +35,7 @@ type initialStateType = {
   loading: boolean
   episodesLoading: boolean
   error: boolean
+  numberOfPages: number
 }
 
 const initialState: initialStateType = {
@@ -38,7 +44,8 @@ const initialState: initialStateType = {
   entities: [],
   loading: false,
   episodesLoading: false,
-  error: false
+  error: false,
+  numberOfPages: 0
 }
 
 export const charactersSlice = createSlice({
@@ -88,6 +95,19 @@ export const charactersSlice = createSlice({
     builder.addCase(getEpisodes.rejected, (state) => {
       state.episodesLoading = true
       state.error = true
+    })
+    builder.addCase(getPages.pending, (state) => {
+      // both `state` and `action` are now correctly typed
+      // based on the slice state and the `pending` action creator
+      state.loading = true
+    })
+    builder.addCase(getPages.fulfilled, (state, action) => {
+      state.loading = false
+      state.numberOfPages = action.payload
+    })
+    // TODO add error handling
+    builder.addCase(getPages.rejected, (state) => {
+      state.loading = true
     })
   }
 
