@@ -10,6 +10,7 @@ type ListProps = {
     firstLetter : boolean
     numberOfPages : number
     pageNumber: number
+    shouldReloadPage: boolean
 }
 
 export function filterItem (el : CharactersType, props : ListProps) : boolean {

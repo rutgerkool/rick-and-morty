@@ -1,5 +1,6 @@
 import React, { ChangeEvent } from 'react'
-import { Button, ButtonGroup, TextField } from '@mui/material'
+import { Button, ButtonGroup, Slide, Snackbar, TextField } from '@mui/material'
+import Alert from '@mui/material/Alert'
 
 const buttonStyles = {
   display: 'block',
@@ -18,6 +19,40 @@ type FilterProps = {
         pageNumber: number
   }>>
   numberOfPages: number
+}
+
+export function ErrorModal (props: {statusCode?: number}) {
+  const getErrorMessage = () => {
+    switch (props.statusCode) {
+      case 404:
+        return 'The server cannot find the requested resource. '
+      case 429:
+        return 'The server has received too many requests.'
+      case 500:
+        return 'The server has encountered a situation it does not know how to handle.'
+      default:
+        return 'Something went wrong. Please try again later'
+    }
+  }
+
+  return (
+  <Snackbar
+    open={true}
+    anchorOrigin={{
+      vertical: 'bottom',
+      horizontal: 'center'
+    }}
+    TransitionComponent={(props) => <Slide { ...props } direction='up'/>}
+    ContentProps={{
+      'aria-describedby': 'message-id'
+    }}
+    message={<span id='message-id'>{getErrorMessage()}</span>}
+  >
+    <Alert variant="filled" severity="error">
+      {getErrorMessage()}
+    </Alert>
+</Snackbar>
+  )
 }
 
 export function BackButton () {
@@ -65,6 +100,19 @@ export function FilterBar (props : FilterProps) {
                 )}
             </ButtonGroup>
         </div>
+  )
+}
+
+export function LoadMoreButton (props: {getMoreCharacters: () => void}) {
+  return (
+    <Button
+      onClick={e => {
+        e.preventDefault()
+        props.getMoreCharacters()
+      }}
+    >
+      Load more
+    </Button>
   )
 }
 

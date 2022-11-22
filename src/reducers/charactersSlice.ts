@@ -1,29 +1,38 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { Api } from '../utils/api'
 import { CharactersType } from '../components/CharacterUI'
+interface ThunkError {
+  status: number
+}
 
-// createAsyncThunk generates promise lifecycle action types using action passed as a prefix:
-// pending: characters/getCharacters/pending
-// fulfilled: characters/getCharacters/fulfilled
-// rejected: characters/getCharacters/rejected
-export const getPages = createAsyncThunk(
+export const getPages = createAsyncThunk<number, undefined, {rejectValue: ThunkError}>(
   'characters/getPages',
   async () => await Api.getPages()
 )
 
-export const getCharacters = createAsyncThunk(
-  // action type string
+export const getCharacters = createAsyncThunk<CharactersType[], number, {rejectValue: ThunkError}>(
   'characters/getCharacters',
-  // callback function
   async (pageNumber: number) => await Api.getCharacters(pageNumber)
 )
 
-export const getCharacter = createAsyncThunk(
-  'characters/getCharacter',
-  async (characterID: string) => await Api.getCharacter(characterID)
+export const getMoreCharacters = createAsyncThunk<CharactersType[], number, {rejectValue: ThunkError}>(
+  'characters/getMoreCharacters',
+  async (pageNumber: number) => await Api.getCharacters(pageNumber)
 )
 
-export const getEpisodes = createAsyncThunk(
+export const getCharacter = createAsyncThunk<CharactersType[], string, {rejectValue: ThunkError}>(
+  'characters/getCharacter',
+  async (characterID: string, { rejectWithValue }) => {
+    try {
+      return await Api.getCharacter(characterID)
+    } catch (error) {
+      const thunkError = error as ThunkError
+      return rejectWithValue(thunkError)
+    }
+  }
+)
+
+export const getEpisodes = createAsyncThunk<string[], CharactersType, {rejectValue: ThunkError}>(
   'characters/getEpisodes',
   async (character: CharactersType) => await Api.getEpisodes(character)
 )
@@ -34,8 +43,9 @@ type initialStateType = {
   entities: CharactersType[]
   loading: boolean
   episodesLoading: boolean
-  error: boolean
+  statusCode: number | undefined
   numberOfPages: number
+  lastPage: number
 }
 
 const initialState: initialStateType = {
@@ -44,8 +54,9 @@ const initialState: initialStateType = {
   entities: [],
   loading: false,
   episodesLoading: false,
-  error: false,
-  numberOfPages: 0
+  statusCode: undefined,
+  numberOfPages: 0,
+  lastPage: 0
 }
 
 export const charactersSlice = createSlice({
@@ -54,65 +65,61 @@ export const charactersSlice = createSlice({
   reducers: {},
   extraReducers: builder => {
     builder.addCase(getCharacters.pending, (state) => {
-      // both `state` and `action` are now correctly typed
-      // based on the slice state and the `pending` action creator
       state.loading = true
     })
     builder.addCase(getCharacters.fulfilled, (state, action) => {
       state.loading = false
+      state.lastPage = action.meta.arg
       state.entities = action.payload
     })
-    // TODO add error handling
     builder.addCase(getCharacters.rejected, (state) => {
       state.loading = true
     })
     builder.addCase(getCharacter.pending, (state) => {
-      // both `state` and `action` are now correctly typed
-      // based on the slice state and the `pending` action creator
       state.loading = true
     })
     builder.addCase(getCharacter.fulfilled, (state, action) => {
       state.loading = false
       state.entity = action.payload
-      state.error = false
     })
-    // TODO add error handling
-    builder.addCase(getCharacter.rejected, (state) => {
-      state.loading = true
-      state.error = true
+    builder.addCase(getCharacter.rejected, (state, action) => {
+      state.loading = false
+      state.statusCode = action.payload?.status
     })
     builder.addCase(getEpisodes.pending, (state) => {
-      // both `state` and `action` are now correctly typed
-      // based on the slice state and the `pending` action creator
       state.episodesLoading = true
     })
     builder.addCase(getEpisodes.fulfilled, (state, action) => {
       state.episodesLoading = false
       state.episodes = action.payload
-      state.error = false
     })
-    // TODO add error handling
-    builder.addCase(getEpisodes.rejected, (state) => {
+    builder.addCase(getEpisodes.rejected, (state, action) => {
       state.episodesLoading = true
-      state.error = true
+      state.statusCode = action.payload?.status
     })
     builder.addCase(getPages.pending, (state) => {
-      // both `state` and `action` are now correctly typed
-      // based on the slice state and the `pending` action creator
       state.loading = true
     })
     builder.addCase(getPages.fulfilled, (state, action) => {
       state.loading = false
       state.numberOfPages = action.payload
     })
-    // TODO add error handling
     builder.addCase(getPages.rejected, (state) => {
+      state.loading = true
+    })
+    builder.addCase(getMoreCharacters.pending, (state) => {
+      state.loading = true
+    })
+    builder.addCase(getMoreCharacters.fulfilled, (state, action) => {
+      state.loading = false
+      state.lastPage = action.meta.arg
+      state.entities = state.entities.concat(action.payload)
+    })
+    builder.addCase(getMoreCharacters.rejected, (state) => {
       state.loading = true
     })
   }
 
 })
-
-// Action creators are generated for each case reducer function
 
 export default charactersSlice.reducer

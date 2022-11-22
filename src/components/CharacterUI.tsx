@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import '../styles/CharacterList.css'
-import { FilterBar, SearchBar } from './UIComonents'
+import { FilterBar, LoadMoreButton, SearchBar } from './UIComonents'
 import { CharacterList } from './CharacterList'
 import { useAppDispatch, useAppSelector } from '../hooks/reduxHooks'
-import { getPages } from '../reducers/charactersSlice'
+import { getMoreCharacters, getPages } from '../reducers/charactersSlice'
 
 export type CharactersType = {
     id: number,
@@ -21,13 +21,22 @@ export type CharactersType = {
 
 export function CharacterUI () {
   const [pageNumber, setPageNumber] = useState<{pageNumber: number}>({ pageNumber: 1 })
+  const [togglePageReload, setShouldReloadPage] = useState<boolean>(false)
+  const [scrollValue, setScrollValue] = useState<number>(0)
   const dispatch = useAppDispatch()
   const pagesFromStore = useAppSelector(state => state.characters.numberOfPages)
+  const lastPageFromStore = useAppSelector(state => state.characters.lastPage)
   const [{ filterValue, firstLetter }, setFilterValue] = useState<{filterValue: string, firstLetter: boolean}>({ filterValue: '', firstLetter: false })
 
   useEffect(() => {
     dispatch(getPages())
   }, [])
+
+  const onScroll = (e: any) => {
+    setScrollValue(e.target.documentElement.scrollTop)
+  }
+
+  window.addEventListener('scroll', onScroll)
 
   return (
         <div className='page-container'>
@@ -43,7 +52,18 @@ export function CharacterUI () {
                 firstLetter={firstLetter}
                 numberOfPages={pagesFromStore}
                 pageNumber={pageNumber.pageNumber}
+                shouldReloadPage={togglePageReload}
             />
+            {lastPageFromStore >= pagesFromStore
+              ? null
+              : (
+              <LoadMoreButton getMoreCharacters={() => {
+                dispatch(getMoreCharacters(lastPageFromStore + 1))
+                setShouldReloadPage(!togglePageReload)
+                console.log(scrollValue)
+              } } />
+                )
+            }
         </div>
   )
 }
