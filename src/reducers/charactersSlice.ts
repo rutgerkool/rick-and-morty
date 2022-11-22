@@ -5,6 +5,11 @@ interface ThunkError {
   status: number
 }
 
+export const getPagesWithWrongEndpoint = createAsyncThunk<number, undefined, {rejectValue: ThunkError}>(
+  'characters/getPagesWithWrongEndpoint',
+  async () => await Api.getPagesWithWrongEndpoint()
+)
+
 export const getPages = createAsyncThunk<number, undefined, {rejectValue: ThunkError}>(
   'characters/getPages',
   async () => await Api.getPages()
@@ -44,6 +49,7 @@ type initialStateType = {
   loading: boolean
   episodesLoading: boolean
   statusCode: number | undefined
+  isInErrorState: boolean
   numberOfPages: number
   lastPage: number
 }
@@ -55,6 +61,7 @@ const initialState: initialStateType = {
   loading: false,
   episodesLoading: false,
   statusCode: undefined,
+  isInErrorState: false,
   numberOfPages: 0,
   lastPage: 0
 }
@@ -74,6 +81,7 @@ export const charactersSlice = createSlice({
     })
     builder.addCase(getCharacters.rejected, (state) => {
       state.loading = true
+      state.isInErrorState = true
     })
     builder.addCase(getCharacter.pending, (state) => {
       state.loading = true
@@ -85,6 +93,7 @@ export const charactersSlice = createSlice({
     builder.addCase(getCharacter.rejected, (state, action) => {
       state.loading = false
       state.statusCode = action.payload?.status
+      state.isInErrorState = true
     })
     builder.addCase(getEpisodes.pending, (state) => {
       state.episodesLoading = true
@@ -96,6 +105,7 @@ export const charactersSlice = createSlice({
     builder.addCase(getEpisodes.rejected, (state, action) => {
       state.episodesLoading = true
       state.statusCode = action.payload?.status
+      state.isInErrorState = true
     })
     builder.addCase(getPages.pending, (state) => {
       state.loading = true
@@ -106,6 +116,7 @@ export const charactersSlice = createSlice({
     })
     builder.addCase(getPages.rejected, (state) => {
       state.loading = true
+      state.isInErrorState = true
     })
     builder.addCase(getMoreCharacters.pending, (state) => {
       state.loading = true
@@ -115,8 +126,15 @@ export const charactersSlice = createSlice({
       state.lastPage = action.meta.arg
       state.entities = state.entities.concat(action.payload)
     })
-    builder.addCase(getMoreCharacters.rejected, (state) => {
+    builder.addCase(getMoreCharacters.rejected, (state, action) => {
       state.loading = true
+      state.statusCode = action.payload?.status
+      state.isInErrorState = true
+    })
+    builder.addCase(getPagesWithWrongEndpoint.rejected, (state, action) => {
+      state.loading = false
+      state.statusCode = action.payload?.status
+      state.isInErrorState = true
     })
   }
 

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { CharactersType } from './CharacterUI'
 import { CharacterCard } from './Character'
 import { Link } from 'react-router-dom'
