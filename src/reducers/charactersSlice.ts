@@ -2,12 +2,19 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { Api } from '../utils/api'
 import { CharactersType } from '../components/CharacterUI'
 interface ThunkError {
-  status: number
+  error: string
 }
 
 export const getPagesWithWrongEndpoint = createAsyncThunk<number, undefined, {rejectValue: ThunkError}>(
   'characters/getPagesWithWrongEndpoint',
-  async () => await Api.getPagesWithWrongEndpoint()
+  async (_: undefined, { rejectWithValue }: any) => {
+    try {
+      return await Api.getPagesWithWrongEndpoint()
+    } catch (error) {
+      const thunkError = error as ThunkError
+      return rejectWithValue(thunkError)
+    }
+  }
 )
 
 export const getPages = createAsyncThunk<number, undefined, {rejectValue: ThunkError}>(
@@ -17,12 +24,26 @@ export const getPages = createAsyncThunk<number, undefined, {rejectValue: ThunkE
 
 export const getCharacters = createAsyncThunk<CharactersType[], number, {rejectValue: ThunkError}>(
   'characters/getCharacters',
-  async (pageNumber: number) => await Api.getCharacters(pageNumber)
+  async (pageNumber: number, { rejectWithValue }) => {
+    try {
+      return await Api.getCharacters(pageNumber)
+    } catch (error) {
+      const thunkError = error as ThunkError
+      return rejectWithValue(thunkError)
+    }
+  }
 )
 
 export const getMoreCharacters = createAsyncThunk<CharactersType[], number, {rejectValue: ThunkError}>(
   'characters/getMoreCharacters',
-  async (pageNumber: number) => await Api.getCharacters(pageNumber)
+  async (pageNumber: number, { rejectWithValue }) => {
+    try {
+      return await Api.getCharacters(pageNumber)
+    } catch (error) {
+      const thunkError = error as ThunkError
+      return rejectWithValue(thunkError)
+    }
+  }
 )
 
 export const getCharacter = createAsyncThunk<CharactersType[], string, {rejectValue: ThunkError}>(
@@ -48,7 +69,7 @@ type initialStateType = {
   entities: CharactersType[]
   loading: boolean
   episodesLoading: boolean
-  statusCode: number | undefined
+  errorMessage: string[]
   isInErrorState: boolean
   numberOfPages: number
   lastPage: number
@@ -60,7 +81,7 @@ const initialState: initialStateType = {
   entities: [],
   loading: false,
   episodesLoading: false,
-  statusCode: undefined,
+  errorMessage: [],
   isInErrorState: false,
   numberOfPages: 0,
   lastPage: 0
@@ -92,7 +113,7 @@ export const charactersSlice = createSlice({
     })
     builder.addCase(getCharacter.rejected, (state, action) => {
       state.loading = false
-      state.statusCode = action.payload?.status
+      if (action.payload) state.errorMessage.push(action.payload.error)
       state.isInErrorState = true
     })
     builder.addCase(getEpisodes.pending, (state) => {
@@ -104,7 +125,7 @@ export const charactersSlice = createSlice({
     })
     builder.addCase(getEpisodes.rejected, (state, action) => {
       state.episodesLoading = true
-      state.statusCode = action.payload?.status
+      if (action.payload) state.errorMessage.push(action.payload.error)
       state.isInErrorState = true
     })
     builder.addCase(getPages.pending, (state) => {
@@ -128,12 +149,13 @@ export const charactersSlice = createSlice({
     })
     builder.addCase(getMoreCharacters.rejected, (state, action) => {
       state.loading = true
-      state.statusCode = action.payload?.status
+      if (action.payload) state.errorMessage.push(action.payload.error)
       state.isInErrorState = true
     })
     builder.addCase(getPagesWithWrongEndpoint.rejected, (state, action) => {
       state.loading = false
-      state.statusCode = action.payload?.status
+      console.log(action.payload)
+      if (action.payload) state.errorMessage.push(action.payload.error)
       state.isInErrorState = true
     })
   }

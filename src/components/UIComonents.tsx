@@ -1,5 +1,5 @@
-import React, { ChangeEvent } from 'react'
-import { Button, ButtonGroup, Slide, Snackbar, TextField } from '@mui/material'
+import React, { ChangeEvent, useState } from 'react'
+import { Button, ButtonGroup, Slide, Snackbar, Stack, TextField } from '@mui/material'
 import Alert from '@mui/material/Alert'
 
 const buttonStyles = {
@@ -21,36 +21,25 @@ type FilterProps = {
   numberOfPages: number
 }
 
-export function ErrorModal (props: {statusCode?: number}) {
-  const getErrorMessage = () => {
-    switch (props.statusCode) {
-      case 404:
-        return 'The server cannot find the requested resource. '
-      case 429:
-        return 'The server has received too many requests.'
-      case 500:
-        return 'The server has encountered a situation it does not know how to handle.'
-      default:
-        return 'Something went wrong. Please try again later'
-    }
-  }
+export function ErrorModal (props: {isOpenFirstTime: boolean, statusMessage?: string[]}) {
+  const [open, setOpen] = useState(props.isOpenFirstTime)
 
   return (
   <Snackbar
-    open={true}
+    open={open}
+    onClose={() => setOpen(false)}
+    autoHideDuration={5000}
     anchorOrigin={{
       vertical: 'bottom',
       horizontal: 'center'
     }}
-    TransitionComponent={(props) => <Slide { ...props } direction='up'/>}
     ContentProps={{
       'aria-describedby': 'message-id'
     }}
-    message={<span id='message-id'>{getErrorMessage()}</span>}
   >
-    <Alert variant="filled" severity="error">
-      {getErrorMessage()}
-    </Alert>
+    <Stack direction={{ xs: 'column' }}>
+      {props.statusMessage ? props.statusMessage.map((message, i) => (<Alert key={i} variant="filled" severity="error">{message}</Alert>)) : null}
+  </Stack>
 </Snackbar>
   )
 }

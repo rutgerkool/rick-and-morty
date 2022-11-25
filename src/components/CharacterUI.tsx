@@ -5,6 +5,7 @@ import { CharacterList } from './CharacterList'
 import { useAppDispatch, useAppSelector } from '../hooks/reduxHooks'
 import { getMoreCharacters, getPages, getPagesWithWrongEndpoint } from '../reducers/charactersSlice'
 import { Button } from '@mui/material'
+import { useNavigate, useParams } from 'react-router-dom'
 
 export type CharactersType = {
     id: number,
@@ -22,7 +23,7 @@ export type CharactersType = {
 
 export function CharacterUI () {
   const errorStateLoadingFromStore = useAppSelector(state => state.characters.isInErrorState)
-  const statusCodeFromStore = useAppSelector(state => state.characters.statusCode)
+  const statusCodeFromStore = useAppSelector(state => state.characters.errorMessage)
   const [pageNumber, setPageNumber] = useState<{pageNumber: number}>({ pageNumber: 1 })
   const [togglePageReload, setShouldReloadPage] = useState<boolean>(false)
   const [scrollValue, setScrollValue] = useState<number>(0)
@@ -30,6 +31,9 @@ export function CharacterUI () {
   const pagesFromStore = useAppSelector(state => state.characters.numberOfPages)
   const lastPageFromStore = useAppSelector(state => state.characters.lastPage)
   const [{ filterValue, firstLetter }, setFilterValue] = useState<{filterValue: string, firstLetter: boolean}>({ filterValue: '', firstLetter: false })
+  const navigate = useNavigate()
+  const params = useParams()
+  console.log(params)
 
   useEffect(() => {
     dispatch(getPages())
@@ -50,9 +54,13 @@ export function CharacterUI () {
             />
             <FilterBar setFilterValue={setFilterValue} setPageNumber={setPageNumber} numberOfPages={pagesFromStore}/>
             <SearchBar setFilterValue={setFilterValue} setPageNumber={setPageNumber} numberOfPages={pagesFromStore}/>
-            <Button onClick={() => {
-              dispatch(getPagesWithWrongEndpoint())
-            }}>Create error</Button>
+            <Button
+              sx={{
+                margin: 2
+              }}
+              onClick={() => {
+                dispatch(getPagesWithWrongEndpoint())
+              }}>Create error</Button>
             <CharacterList
                 filterValue={filterValue}
                 firstLetter={firstLetter}
@@ -66,12 +74,14 @@ export function CharacterUI () {
               <LoadMoreButton getMoreCharacters={() => {
                 dispatch(getMoreCharacters(lastPageFromStore + 1))
                 setShouldReloadPage(!togglePageReload)
-                console.log(scrollValue)
+                navigate(`?page=${lastPageFromStore},${lastPageFromStore + 1}`, { replace: false })
               } } />
                 )
             }
-            {errorStateLoadingFromStore
-              ? <ErrorModal statusCode={statusCodeFromStore} />
+            {statusCodeFromStore.length > 0
+              ? statusCodeFromStore.map((error, index) => {
+                return <ErrorModal isOpenFirstTime={true} statusMessage={statusCodeFromStore} key={error}/>
+              })
               : null}
         </div>
   )

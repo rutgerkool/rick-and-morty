@@ -5,7 +5,7 @@ import { ErrorModal } from './components/UIComonents'
 import { useAppSelector } from './hooks/reduxHooks'
 
 function App () {
-  const statusCodeFromStore = useAppSelector(state => state.characters.statusCode)
+  const statusCodeFromStore = useAppSelector(state => state.characters.errorMessage)
 
   return (
     <div className="App">
@@ -15,7 +15,7 @@ function App () {
         }/>
 
         <Route path={'/notFound'} element={
-          <ErrorModal statusCode={statusCodeFromStore} />
+          <ErrorModal isOpenFirstTime={true} statusMessage={statusCodeFromStore} />
         }/>
 
         <Route path={'/:charId'} element={
@@ -23,7 +23,7 @@ function App () {
         }/>
 
         <Route path={'*'} element={
-          <ErrorModal statusCode={statusCodeFromStore} />
+          <ErrorModal isOpenFirstTime={true} statusMessage={statusCodeFromStore} />
         }/>
 
       </Routes>
