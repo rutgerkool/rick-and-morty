@@ -3,9 +3,9 @@ import '../styles/CharacterList.css'
 import { ErrorModal, FilterBar, LoadMoreButton, SearchBar } from './UIComonents'
 import { CharacterList } from './CharacterList'
 import { useAppDispatch, useAppSelector } from '../hooks/reduxHooks'
-import { getMoreCharacters, getPages, getPagesWithWrongEndpoint } from '../reducers/charactersSlice'
+import { clearErrorState, getMoreCharacters, getPages, getPagesWithWrongEndpoint } from '../reducers/charactersSlice'
 import { Button } from '@mui/material'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
 export type CharactersType = {
     id: number,
@@ -33,17 +33,25 @@ export function CharacterUI () {
   const [{ filterValue, firstLetter }, setFilterValue] = useState<{filterValue: string, firstLetter: boolean}>({ filterValue: '', firstLetter: false })
   const navigate = useNavigate()
   const params = useParams()
-  console.log(params)
+  const [searchParams] = useSearchParams()
 
   useEffect(() => {
     dispatch(getPages())
+    return () => {
+      dispatch(clearErrorState())
+    }
   }, [])
 
-  const onScroll = (e: any) => {
-    setScrollValue(e.target.documentElement.scrollTop)
-  }
+  useEffect(() => {
+    const scrollingElement = (document.scrollingElement || document.body)
+    scrollingElement.scrollTop = scrollValue
+  })
 
-  window.addEventListener('scroll', onScroll)
+  useEffect(() => {
+    if (errorStateLoadingFromStore) {
+      setShouldReloadPage(!togglePageReload)
+    }
+  }, [errorStateLoadingFromStore])
 
   return (
         <div className='page-container'>
@@ -73,8 +81,12 @@ export function CharacterUI () {
               : (
               <LoadMoreButton getMoreCharacters={() => {
                 dispatch(getMoreCharacters(lastPageFromStore + 1))
+                setScrollValue(window.scrollY)
                 setShouldReloadPage(!togglePageReload)
-                navigate(`?page=${lastPageFromStore},${lastPageFromStore + 1}`, { replace: false })
+                console.log(searchParams.get('page'))
+                searchParams.get('page')
+                  ? navigate(`?page=${searchParams.get('page')},${lastPageFromStore + 1}`)
+                  : navigate(`?page=${lastPageFromStore},${lastPageFromStore + 1}`, { replace: false })
               } } />
                 )
             }

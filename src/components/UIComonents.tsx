@@ -38,7 +38,7 @@ export function ErrorModal (props: {isOpenFirstTime: boolean, statusMessage?: st
     }}
   >
     <Stack direction={{ xs: 'column' }}>
-      {props.statusMessage ? props.statusMessage.map((message, i) => (<Alert key={i} variant="filled" severity="error">{message}</Alert>)) : null}
+      {props.statusMessage ? props.statusMessage.map((message, i) => (<Alert onClose={() => setOpen(false)} key={i} variant="filled" severity="error">{message}</Alert>)) : null}
   </Stack>
 </Snackbar>
   )

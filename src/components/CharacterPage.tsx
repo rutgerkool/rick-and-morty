@@ -76,7 +76,7 @@ export function CharacterPage () {
   const dispatch = useAppDispatch()
   const characterFromStore = useAppSelector(state => state.characters.entity)
   const characterLoadingFromStore = useAppSelector(state => state.characters.loading)
-  const characterRejectedFromStore = useAppSelector(state => state.characters.errorMessage)
+  const characterRejectedFromStore = useAppSelector(state => state.characters.isInErrorState)
   const episodesFromStore = useAppSelector(state => state.characters.episodes)
   const episodesLoadingFromStore = useAppSelector(state => state.characters.episodesLoading)
   const params = useParams()
@@ -92,13 +92,9 @@ export function CharacterPage () {
     if (!characterLoadingFromStore && characterFromStore.length !== 0) dispatch(getEpisodes(characterFromStore[0]))
   }, [characterLoadingFromStore])
 
-  useEffect(() => {
-    if (characterRejectedFromStore) {
-      navigate('/notFound')
-    }
-  }, [characterRejectedFromStore, navigate])
-
-  if (characterLoadingFromStore || characterFromStore.length === 0 || episodesLoadingFromStore || episodesFromStore.length === 0) return <p>Loading...</p>
+  if (characterRejectedFromStore) {
+    return <p>Not found</p>
+  } else if (characterLoadingFromStore || characterFromStore.length === 0 || episodesLoadingFromStore || episodesFromStore.length === 0) return <p>Loading...</p>
   else {
     return (
       <div>

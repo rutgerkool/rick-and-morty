@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk, createAction } from '@reduxjs/toolkit'
 import { Api } from '../utils/api'
 import { CharactersType } from '../components/CharacterUI'
 interface ThunkError {
@@ -16,6 +16,8 @@ export const getPagesWithWrongEndpoint = createAsyncThunk<number, undefined, {re
     }
   }
 )
+
+export const clearErrorState = createAction('characters/clearErrorState')
 
 export const getPages = createAsyncThunk<number, undefined, {rejectValue: ThunkError}>(
   'characters/getPages',
@@ -90,13 +92,20 @@ const initialState: initialStateType = {
 export const charactersSlice = createSlice({
   name: 'characters',
   initialState,
-  reducers: {},
+  reducers: {
+    clearErrorState: (state) => {
+      state.isInErrorState = false
+      state.errorMessage = []
+    }
+  },
   extraReducers: builder => {
     builder.addCase(getCharacters.pending, (state) => {
       state.loading = true
+      state.isInErrorState = false
     })
     builder.addCase(getCharacters.fulfilled, (state, action) => {
       state.loading = false
+      state.isInErrorState = false
       state.lastPage = action.meta.arg
       state.entities = action.payload
     })
@@ -106,56 +115,65 @@ export const charactersSlice = createSlice({
     })
     builder.addCase(getCharacter.pending, (state) => {
       state.loading = true
+      state.isInErrorState = false
     })
     builder.addCase(getCharacter.fulfilled, (state, action) => {
       state.loading = false
+      state.isInErrorState = false
       state.entity = action.payload
     })
     builder.addCase(getCharacter.rejected, (state, action) => {
       state.loading = false
-      if (action.payload) state.errorMessage.push(action.payload.error)
+      state.isInErrorState = true
+      if (action.payload) state.errorMessage = [action.payload.error]
       state.isInErrorState = true
     })
     builder.addCase(getEpisodes.pending, (state) => {
       state.episodesLoading = true
+      state.isInErrorState = false
     })
     builder.addCase(getEpisodes.fulfilled, (state, action) => {
       state.episodesLoading = false
+      state.isInErrorState = false
       state.episodes = action.payload
     })
     builder.addCase(getEpisodes.rejected, (state, action) => {
       state.episodesLoading = true
-      if (action.payload) state.errorMessage.push(action.payload.error)
+      if (action.payload) state.errorMessage = [action.payload.error]
       state.isInErrorState = true
     })
     builder.addCase(getPages.pending, (state) => {
       state.loading = true
+      state.isInErrorState = false
     })
     builder.addCase(getPages.fulfilled, (state, action) => {
       state.loading = false
+      state.isInErrorState = false
       state.numberOfPages = action.payload
     })
-    builder.addCase(getPages.rejected, (state) => {
+    builder.addCase(getPages.rejected, (state, action) => {
       state.loading = true
+      if (action.payload) state.errorMessage = [action.payload.error]
       state.isInErrorState = true
     })
     builder.addCase(getMoreCharacters.pending, (state) => {
       state.loading = true
+      state.isInErrorState = false
     })
     builder.addCase(getMoreCharacters.fulfilled, (state, action) => {
       state.loading = false
+      state.isInErrorState = false
       state.lastPage = action.meta.arg
       state.entities = state.entities.concat(action.payload)
     })
     builder.addCase(getMoreCharacters.rejected, (state, action) => {
       state.loading = true
-      if (action.payload) state.errorMessage.push(action.payload.error)
+      if (action.payload) state.errorMessage = [action.payload.error]
       state.isInErrorState = true
     })
     builder.addCase(getPagesWithWrongEndpoint.rejected, (state, action) => {
       state.loading = false
-      console.log(action.payload)
-      if (action.payload) state.errorMessage.push(action.payload.error)
+      if (action.payload) state.errorMessage = [action.payload.error]
       state.isInErrorState = true
     })
   }
