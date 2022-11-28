@@ -3,7 +3,7 @@ import '../styles/CharacterList.css'
 import { ErrorModal, FilterBar, LoadMoreButton, SearchBar } from './UIComonents'
 import { CharacterList } from './CharacterList'
 import { useAppDispatch, useAppSelector } from '../hooks/reduxHooks'
-import { clearErrorState, getMoreCharacters, getPages, getPagesWithWrongEndpoint } from '../reducers/charactersSlice'
+import { clearErrorState, getMoreCharacters, getPages, getPagesWithWrongEndpoint, setScrollPosition } from '../reducers/charactersSlice'
 import { Button } from '@mui/material'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
@@ -26,8 +26,8 @@ export function CharacterUI () {
   const statusCodeFromStore = useAppSelector(state => state.characters.errorMessage)
   const [pageNumber, setPageNumber] = useState<{pageNumber: number}>({ pageNumber: 1 })
   const [togglePageReload, setShouldReloadPage] = useState<boolean>(false)
-  const [scrollValue, setScrollValue] = useState<number>(0)
   const dispatch = useAppDispatch()
+  const scrollPositionFromStore = useAppSelector(state => state.characters.scrollPosition)
   const pagesFromStore = useAppSelector(state => state.characters.numberOfPages)
   const lastPageFromStore = useAppSelector(state => state.characters.lastPage)
   const [{ filterValue, firstLetter }, setFilterValue] = useState<{filterValue: string, firstLetter: boolean}>({ filterValue: '', firstLetter: false })
@@ -44,7 +44,7 @@ export function CharacterUI () {
 
   useEffect(() => {
     const scrollingElement = (document.scrollingElement || document.body)
-    scrollingElement.scrollTop = scrollValue
+    scrollingElement.scrollTop = scrollPositionFromStore
   })
 
   useEffect(() => {
@@ -81,7 +81,7 @@ export function CharacterUI () {
               : (
               <LoadMoreButton getMoreCharacters={() => {
                 dispatch(getMoreCharacters(lastPageFromStore + 1))
-                setScrollValue(window.scrollY)
+                dispatch(setScrollPosition(window.scrollY))
                 setShouldReloadPage(!togglePageReload)
                 console.log(searchParams.get('page'))
                 searchParams.get('page')

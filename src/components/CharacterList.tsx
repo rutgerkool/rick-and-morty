@@ -1,8 +1,8 @@
 import { useEffect } from 'react'
 import { CharactersType } from './CharacterUI'
 import { CharacterCard } from './Character'
-import { Link } from 'react-router-dom'
-import { getCharacters } from '../reducers/charactersSlice'
+import { Link, useSearchParams } from 'react-router-dom'
+import { getCharacters, setScrollPosition } from '../reducers/charactersSlice'
 import { useAppDispatch, useAppSelector } from '../hooks/reduxHooks'
 
 type ListProps = {
@@ -26,9 +26,12 @@ export function CharacterList (props : ListProps) {
   const dispatch = useAppDispatch()
   const charactersFromStore = useAppSelector(state => state.characters.entities)
   const charactersLoadingFromStore = useAppSelector(state => state.characters.loading)
+  const [searchParams] = useSearchParams()
 
   useEffect(() => {
-    dispatch(getCharacters(props.pageNumber))
+    if (charactersFromStore.length === 0) {
+      dispatch(getCharacters(props.pageNumber))
+    }
   }, [props.pageNumber])
 
   if (charactersLoadingFromStore) return <p>Loading...</p>
@@ -48,6 +51,7 @@ export function CharacterList (props : ListProps) {
                             justifyContent: 'center'
                           }}>
                           <Link
+                              onClick={() => dispatch(setScrollPosition(window.scrollY))}
                               className='navlink'
                               to={`/${el.id}`}
                           >

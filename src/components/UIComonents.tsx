@@ -1,6 +1,7 @@
 import React, { ChangeEvent, useState } from 'react'
 import { Button, ButtonGroup, Slide, Snackbar, Stack, TextField } from '@mui/material'
 import Alert from '@mui/material/Alert'
+import { useNavigate } from 'react-router-dom'
 
 const buttonStyles = {
   display: 'block',
@@ -45,11 +46,12 @@ export function ErrorModal (props: {isOpenFirstTime: boolean, statusMessage?: st
 }
 
 export function BackButton () {
+  const navigate = useNavigate()
   return (
         <div className='back-button'>
             <Button
                 variant='contained'
-                href='/'
+                onClick={() => navigate('/')}
                 size='small'
                 sx={{
                   width: '2vw'

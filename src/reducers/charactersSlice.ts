@@ -19,6 +19,8 @@ export const getPagesWithWrongEndpoint = createAsyncThunk<number, undefined, {re
 
 export const clearErrorState = createAction('characters/clearErrorState')
 
+export const setScrollPosition = createAction<number>('characters/setScrollPosition')
+
 export const getPages = createAsyncThunk<number, undefined, {rejectValue: ThunkError}>(
   'characters/getPages',
   async () => await Api.getPages()
@@ -75,6 +77,7 @@ type initialStateType = {
   isInErrorState: boolean
   numberOfPages: number
   lastPage: number
+  scrollPosition: number
 }
 
 const initialState: initialStateType = {
@@ -86,7 +89,8 @@ const initialState: initialStateType = {
   errorMessage: [],
   isInErrorState: false,
   numberOfPages: 0,
-  lastPage: 0
+  lastPage: 0,
+  scrollPosition: 0
 }
 
 export const charactersSlice = createSlice({
@@ -96,6 +100,9 @@ export const charactersSlice = createSlice({
     clearErrorState: (state) => {
       state.isInErrorState = false
       state.errorMessage = []
+    },
+    setScrollPosition: (state, action) => {
+      state.scrollPosition = action.payload
     }
   },
   extraReducers: builder => {
