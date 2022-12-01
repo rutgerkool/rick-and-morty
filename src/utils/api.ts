@@ -28,6 +28,16 @@ const getCharacters = async (pageNumber: number): Promise<CharactersType[]> => {
   return characters
 }
 
+const getCharactersByName = async (characterName: string): Promise<CharactersType[]> => {
+  const characters = []
+
+  const charactersResponse = await fetch(`https://rickandmortyapi.com/api/character/?name=${characterName}`)
+  if (!charactersResponse.ok) return Promise.reject(await charactersResponse.json())
+  const partialCharacters = await charactersResponse.json()
+  characters.push(...partialCharacters.results)
+  return characters
+}
+
 const getCharacter = async (characterID: string): Promise<CharactersType[]> => {
   const characterResponse = await fetch(`https://rickandmortyapi.com/api/character/${characterID}`)
   if (!characterResponse.ok) {
@@ -54,6 +64,7 @@ export const Api = {
   getPagesWithWrongEndpoint,
   getPages,
   getCharacters,
+  getCharactersByName,
   getCharacter,
   getEpisodes
 }

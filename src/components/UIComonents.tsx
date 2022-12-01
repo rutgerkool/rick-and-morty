@@ -2,6 +2,8 @@ import React, { ChangeEvent, useState } from 'react'
 import { Button, ButtonGroup, Slide, Snackbar, Stack, TextField } from '@mui/material'
 import Alert from '@mui/material/Alert'
 import { useNavigate } from 'react-router-dom'
+import { useAppDispatch } from '../hooks/reduxHooks'
+import { clearSearchResults, getCharactersByName } from '../reducers/charactersSlice'
 
 const buttonStyles = {
   display: 'block',
@@ -107,10 +109,16 @@ export function LoadMoreButton (props: {getMoreCharacters: () => void}) {
   )
 }
 
-export function SearchBar (props : FilterProps) {
+function sleep (ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
+
+export function SearchBar () {
+  const dispatch = useAppDispatch()
+  const [loadingSearchResults, setLoadingSearchResults] = useState<boolean>(false)
+
   function handleSearchEvent (e : ChangeEvent<HTMLInputElement>) {
-    e.preventDefault()
-    props.setFilterValue({ filterValue: e.target.value.toLowerCase(), firstLetter: false })
+    dispatch(getCharactersByName(e.target.value.toLowerCase()))
   }
 
   return (
@@ -122,7 +130,19 @@ export function SearchBar (props : FilterProps) {
               backgroundColor: 'lightgrey',
               ...buttonStyles,
               borderRadius: 5
-            }} label="Search" onChange={handleSearchEvent}/>
+            }} label="Search" onChange={async (e: ChangeEvent<HTMLInputElement>) => {
+              e.preventDefault()
+              const searchValue = e.target.value.toLowerCase()
+              if (searchValue === '') {
+                setLoadingSearchResults(false)
+                return dispatch(clearSearchResults())
+              }
+              setLoadingSearchResults(true)
+              await sleep(2000)
+              setLoadingSearchResults(false)
+              if (searchValue === e.target.value.toLowerCase()) handleSearchEvent(e)
+            }}/>
+            {loadingSearchResults ? <p>Loading...</p> : null}
         </div>
   )
 }

@@ -19,6 +19,8 @@ export const getPagesWithWrongEndpoint = createAsyncThunk<number, undefined, {re
 
 export const clearErrorState = createAction('characters/clearErrorState')
 
+export const clearSearchResults = createAction('characters/clearSearchResults')
+
 export const setScrollPosition = createAction<number>('characters/setScrollPosition')
 
 export const getPages = createAsyncThunk<number, undefined, {rejectValue: ThunkError}>(
@@ -31,6 +33,18 @@ export const getCharacters = createAsyncThunk<CharactersType[], number, {rejectV
   async (pageNumber: number, { rejectWithValue }) => {
     try {
       return await Api.getCharacters(pageNumber)
+    } catch (error) {
+      const thunkError = error as ThunkError
+      return rejectWithValue(thunkError)
+    }
+  }
+)
+
+export const getCharactersByName = createAsyncThunk<CharactersType[], string, {rejectValue: ThunkError}>(
+  'characters/getCharactersByName',
+  async (characterName: string, { rejectWithValue }) => {
+    try {
+      return await Api.getCharactersByName(characterName)
     } catch (error) {
       const thunkError = error as ThunkError
       return rejectWithValue(thunkError)
@@ -71,6 +85,7 @@ type initialStateType = {
   entity: CharactersType[],
   episodes: string[],
   entities: CharactersType[]
+  searchedEntities: CharactersType[]
   loading: boolean
   episodesLoading: boolean
   errorMessage: string[]
@@ -84,6 +99,7 @@ const initialState: initialStateType = {
   entity: [],
   episodes: [],
   entities: [],
+  searchedEntities: [],
   loading: false,
   episodesLoading: false,
   errorMessage: [],
@@ -100,6 +116,10 @@ export const charactersSlice = createSlice({
     clearErrorState: (state) => {
       state.isInErrorState = false
       state.errorMessage = []
+    },
+    clearSearchResults: (state) => {
+      state.isInErrorState = false
+      state.searchedEntities = []
     },
     setScrollPosition: (state, action) => {
       state.scrollPosition = action.payload
@@ -118,6 +138,19 @@ export const charactersSlice = createSlice({
     })
     builder.addCase(getCharacters.rejected, (state) => {
       state.loading = true
+      state.isInErrorState = true
+    })
+    builder.addCase(getCharactersByName.pending, (state) => {
+      state.loading = true
+      state.isInErrorState = false
+    })
+    builder.addCase(getCharactersByName.fulfilled, (state, action) => {
+      state.loading = false
+      state.isInErrorState = false
+      state.searchedEntities = action.payload
+    })
+    builder.addCase(getCharactersByName.rejected, (state) => {
+      state.loading = false
       state.isInErrorState = true
     })
     builder.addCase(getCharacter.pending, (state) => {

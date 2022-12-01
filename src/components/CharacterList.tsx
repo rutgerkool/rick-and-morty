@@ -1,7 +1,7 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { CharactersType } from './CharacterUI'
 import { CharacterCard } from './Character'
-import { Link, useSearchParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { getCharacters, setScrollPosition } from '../reducers/charactersSlice'
 import { useAppDispatch, useAppSelector } from '../hooks/reduxHooks'
 
@@ -24,9 +24,10 @@ export function filterItem (el : CharactersType, props : ListProps) : boolean {
 
 export function CharacterList (props : ListProps) {
   const dispatch = useAppDispatch()
+  const [listedCharacters, setListedCharacters] = useState<CharactersType[]>([])
   const charactersFromStore = useAppSelector(state => state.characters.entities)
+  const searchedCharactersFromStore = useAppSelector(state => state.characters.searchedEntities)
   const charactersLoadingFromStore = useAppSelector(state => state.characters.loading)
-  const [searchParams] = useSearchParams()
 
   useEffect(() => {
     if (charactersFromStore.length === 0) {
@@ -34,12 +35,20 @@ export function CharacterList (props : ListProps) {
     }
   }, [props.pageNumber])
 
+  useEffect(() => {
+    if (searchedCharactersFromStore.length > 0) {
+      setListedCharacters(searchedCharactersFromStore)
+    } else {
+      setListedCharacters(charactersFromStore)
+    }
+  }, [charactersFromStore, searchedCharactersFromStore])
+
   if (charactersLoadingFromStore) return <p>Loading...</p>
 
   return (
         <div>
             {
-              charactersFromStore.map(el => {
+              listedCharacters.map(el => {
                 const isCharacter : boolean = filterItem(el, props)
                 if (!isCharacter) return null
                 return (

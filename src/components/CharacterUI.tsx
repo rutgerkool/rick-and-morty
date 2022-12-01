@@ -61,7 +61,7 @@ export function CharacterUI () {
                 alt={'logo'}
             />
             <FilterBar setFilterValue={setFilterValue} setPageNumber={setPageNumber} numberOfPages={pagesFromStore}/>
-            <SearchBar setFilterValue={setFilterValue} setPageNumber={setPageNumber} numberOfPages={pagesFromStore}/>
+            <SearchBar />
             <Button
               sx={{
                 margin: 2
