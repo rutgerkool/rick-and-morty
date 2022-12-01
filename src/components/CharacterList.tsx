@@ -30,9 +30,7 @@ export function CharacterList (props : ListProps) {
   const charactersLoadingFromStore = useAppSelector(state => state.characters.loading)
 
   useEffect(() => {
-    if (charactersFromStore.length === 0) {
-      dispatch(getCharacters(props.pageNumber))
-    }
+    dispatch(getCharacters(props.pageNumber))
   }, [props.pageNumber])
 
   useEffect(() => {

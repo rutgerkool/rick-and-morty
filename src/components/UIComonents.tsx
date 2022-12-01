@@ -66,8 +66,8 @@ export function BackButton () {
 }
 
 export function FilterBar (props : FilterProps) {
-  const alphabet = []
-  for (let i = 1; i <= props.numberOfPages; i++) alphabet.push(i)
+  const pageNumbers = []
+  for (let i = 1; i <= props.numberOfPages; i++) pageNumbers.push(i)
 
   return (
         <div className='filter-bar'>
@@ -78,7 +78,7 @@ export function FilterBar (props : FilterProps) {
                   ...buttonStyles
                 }}
             >
-                {alphabet.map(el =>
+                {pageNumbers.map(el =>
                     <Button
                         key={el}
                         size='small'
