@@ -4,6 +4,7 @@ import { CharacterCard } from './Character'
 import { Link } from 'react-router-dom'
 import { getCharacters, setScrollPosition } from '../reducers/charactersSlice'
 import { useAppDispatch, useAppSelector } from '../hooks/reduxHooks'
+import { Spinner } from './UIComonents'
 
 type ListProps = {
     filterValue : string
@@ -25,9 +26,11 @@ export function filterItem (el : CharactersType, props : ListProps) : boolean {
 export function CharacterList (props : ListProps) {
   const dispatch = useAppDispatch()
   const [listedCharacters, setListedCharacters] = useState<CharactersType[]>([])
-  const charactersFromStore = useAppSelector(state => state.characters.entities)
-  const searchedCharactersFromStore = useAppSelector(state => state.characters.searchedEntities)
-  const charactersLoadingFromStore = useAppSelector(state => state.characters.loading)
+  const {
+    entities: charactersFromStore,
+    searchedEntities: searchedCharactersFromStore,
+    loading: charactersLoadingFromStore
+  } = useAppSelector(state => state.characters)
 
   useEffect(() => {
     dispatch(getCharacters(props.pageNumber))
@@ -41,7 +44,11 @@ export function CharacterList (props : ListProps) {
     }
   }, [charactersFromStore, searchedCharactersFromStore])
 
-  if (charactersLoadingFromStore) return <p>Loading...</p>
+  if (charactersLoadingFromStore) {
+    return (
+      <Spinner />
+    )
+  }
 
   return (
         <div>

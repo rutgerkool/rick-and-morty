@@ -1,9 +1,12 @@
 import React, { ChangeEvent, useState } from 'react'
-import { Button, ButtonGroup, Slide, Snackbar, Stack, TextField } from '@mui/material'
+import { Button, ButtonGroup, Snackbar, Stack, TextField } from '@mui/material'
 import Alert from '@mui/material/Alert'
 import { useNavigate } from 'react-router-dom'
 import { useAppDispatch } from '../hooks/reduxHooks'
-import { clearSearchResults, getCharactersByName } from '../reducers/charactersSlice'
+import { clearSearchResults, getCharactersByName, setLoadingState } from '../reducers/charactersSlice'
+import { useDispatch } from 'react-redux'
+import RingLoader from 'react-spinners/RingLoader'
+import { CharactersType } from './CharacterUI'
 
 const buttonStyles = {
   display: 'block',
@@ -65,7 +68,28 @@ export function BackButton () {
   )
 }
 
+export function Spinner () {
+  return (
+    <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          marginBottom: 20,
+          paddingBottom: 20
+        }}>
+        <RingLoader
+          color={'blue'}
+          loading={true}
+          size={100}
+          aria-label="Loading Spinner"
+          data-testid="loader"
+        />
+      </div>
+  )
+}
+
 export function FilterBar (props : FilterProps) {
+  const dispatch = useDispatch()
   const pageNumbers = []
   for (let i = 1; i <= props.numberOfPages; i++) pageNumbers.push(i)
 
@@ -87,6 +111,7 @@ export function FilterBar (props : FilterProps) {
                         }}
                         onClick={e => {
                           e.preventDefault()
+                          dispatch(clearSearchResults())
                           props.setPageNumber({ pageNumber: el })
                         }}>{el.toString()}
                     </Button>
@@ -115,10 +140,21 @@ function sleep (ms: number) {
 
 export function SearchBar () {
   const dispatch = useAppDispatch()
-  const [loadingSearchResults, setLoadingSearchResults] = useState<boolean>(false)
 
   function handleSearchEvent (e : ChangeEvent<HTMLInputElement>) {
     dispatch(getCharactersByName(e.target.value.toLowerCase()))
+  }
+
+  const handleOnChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault()
+    const searchValue = e.target.value.toLowerCase()
+    if (searchValue === '') {
+      dispatch(setLoadingState(false))
+      return dispatch(clearSearchResults())
+    }
+    dispatch(setLoadingState(true))
+    await sleep(1000)
+    if (searchValue === e.target.value.toLowerCase()) handleSearchEvent(e)
   }
 
   return (
@@ -130,19 +166,7 @@ export function SearchBar () {
               backgroundColor: 'lightgrey',
               ...buttonStyles,
               borderRadius: 5
-            }} label="Search" onChange={async (e: ChangeEvent<HTMLInputElement>) => {
-              e.preventDefault()
-              const searchValue = e.target.value.toLowerCase()
-              if (searchValue === '') {
-                setLoadingSearchResults(false)
-                return dispatch(clearSearchResults())
-              }
-              setLoadingSearchResults(true)
-              await sleep(2000)
-              setLoadingSearchResults(false)
-              if (searchValue === e.target.value.toLowerCase()) handleSearchEvent(e)
-            }}/>
-            {loadingSearchResults ? <p>Loading...</p> : null}
+            }} label="Search" onChange={handleOnChange}/>
         </div>
   )
 }

@@ -23,6 +23,8 @@ export const clearSearchResults = createAction('characters/clearSearchResults')
 
 export const setScrollPosition = createAction<number>('characters/setScrollPosition')
 
+export const setLoadingState = createAction<boolean>('characters/setLoadingState')
+
 export const getPages = createAsyncThunk<number, undefined, {rejectValue: ThunkError}>(
   'characters/getPages',
   async () => await Api.getPages()
@@ -123,6 +125,9 @@ export const charactersSlice = createSlice({
     },
     setScrollPosition: (state, action) => {
       state.scrollPosition = action.payload
+    },
+    setLoadingState: (state, action) => {
+      state.loading = action.payload
     }
   },
   extraReducers: builder => {

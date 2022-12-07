@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { List, ListItem } from '@mui/material'
-import { BackButton } from './UIComonents'
+import { BackButton, Spinner } from './UIComonents'
 import { CharactersType } from './CharacterUI'
 import { listStyles, CharacterCardInfo } from './Character'
 import { useAppDispatch, useAppSelector } from '../hooks/reduxHooks'
@@ -74,13 +74,14 @@ function CharacterPageInfo (props : CharacterPageProps) {
 
 export function CharacterPage () {
   const dispatch = useAppDispatch()
-  const characterFromStore = useAppSelector(state => state.characters.entity)
-  const characterLoadingFromStore = useAppSelector(state => state.characters.loading)
-  const characterRejectedFromStore = useAppSelector(state => state.characters.isInErrorState)
-  const episodesFromStore = useAppSelector(state => state.characters.episodes)
-  const episodesLoadingFromStore = useAppSelector(state => state.characters.episodesLoading)
+  const {
+    entity: characterFromStore,
+    loading: characterLoadingFromStore,
+    isInErrorState: characterRejectedFromStore,
+    episodes: episodesFromStore,
+    episodesLoading: episodesLoadingFromStore
+  } = useAppSelector(state => state.characters)
   const params = useParams()
-  const navigate = useNavigate()
 
   useEffect(() => {
     if (params.charId) {
@@ -94,8 +95,11 @@ export function CharacterPage () {
 
   if (characterRejectedFromStore) {
     return <p>Not found</p>
-  } else if (characterLoadingFromStore || characterFromStore.length === 0 || episodesLoadingFromStore || episodesFromStore.length === 0) return <p>Loading...</p>
-  else {
+  } else if (characterLoadingFromStore || characterFromStore.length === 0 || episodesLoadingFromStore || episodesFromStore.length === 0) {
+    return (
+      <Spinner />
+    )
+  } else {
     return (
       <div>
           <>

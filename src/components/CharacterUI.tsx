@@ -5,7 +5,6 @@ import { CharacterList } from './CharacterList'
 import { useAppDispatch, useAppSelector } from '../hooks/reduxHooks'
 import { clearErrorState, getMoreCharacters, getPages, getPagesWithWrongEndpoint, setScrollPosition } from '../reducers/charactersSlice'
 import { Button } from '@mui/material'
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
 export type CharactersType = {
     id: number,
@@ -22,18 +21,19 @@ export type CharactersType = {
 }
 
 export function CharacterUI () {
-  const errorStateLoadingFromStore = useAppSelector(state => state.characters.isInErrorState)
-  const statusCodeFromStore = useAppSelector(state => state.characters.errorMessage)
+  const dispatch = useAppDispatch()
+  const {
+    searchedEntities: searchedCharactersFromStore,
+    isInErrorState: characterRejectedFromStore,
+    errorMessage: statusCodeFromStore,
+    numberOfPages: pagesFromStore,
+    lastPage: lastPageFromStore,
+    scrollPosition: scrollPositionFromStore,
+    loading: loadingFromStore
+  } = useAppSelector(state => state.characters)
   const [pageNumber, setPageNumber] = useState<{pageNumber: number}>({ pageNumber: 1 })
   const [togglePageReload, setShouldReloadPage] = useState<boolean>(false)
-  const dispatch = useAppDispatch()
-  const scrollPositionFromStore = useAppSelector(state => state.characters.scrollPosition)
-  const pagesFromStore = useAppSelector(state => state.characters.numberOfPages)
-  const lastPageFromStore = useAppSelector(state => state.characters.lastPage)
   const [{ filterValue, firstLetter }, setFilterValue] = useState<{filterValue: string, firstLetter: boolean}>({ filterValue: '', firstLetter: false })
-  const navigate = useNavigate()
-  const params = useParams()
-  const [searchParams] = useSearchParams()
 
   useEffect(() => {
     dispatch(getPages())
@@ -48,10 +48,10 @@ export function CharacterUI () {
   })
 
   useEffect(() => {
-    if (errorStateLoadingFromStore) {
+    if (characterRejectedFromStore) {
       setShouldReloadPage(!togglePageReload)
     }
-  }, [errorStateLoadingFromStore])
+  }, [characterRejectedFromStore])
 
   return (
         <div className='page-container'>
@@ -76,22 +76,18 @@ export function CharacterUI () {
                 pageNumber={pageNumber.pageNumber}
                 shouldReloadPage={togglePageReload}
             />
-            {lastPageFromStore >= pagesFromStore
+            {lastPageFromStore >= pagesFromStore || searchedCharactersFromStore.length > 0 || loadingFromStore
               ? null
               : (
               <LoadMoreButton getMoreCharacters={() => {
                 dispatch(getMoreCharacters(lastPageFromStore + 1))
                 dispatch(setScrollPosition(window.scrollY))
                 setShouldReloadPage(!togglePageReload)
-                console.log(searchParams.get('page'))
-                searchParams.get('page')
-                  ? navigate(`?page=${searchParams.get('page')},${lastPageFromStore + 1}`)
-                  : navigate(`?page=${lastPageFromStore},${lastPageFromStore + 1}`, { replace: false })
               } } />
                 )
             }
             {statusCodeFromStore.length > 0
-              ? statusCodeFromStore.map((error, index) => {
+              ? statusCodeFromStore.map((error) => {
                 return <ErrorModal isOpenFirstTime={true} statusMessage={statusCodeFromStore} key={error}/>
               })
               : null}
