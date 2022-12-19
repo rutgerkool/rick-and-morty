@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
-import { CharactersType } from './CharacterUI'
-import { CharacterCard } from './CharacterCard'
+import { CharactersType } from '../CharacterUI'
+import { CharacterCard } from '../CharacterCard/CharacterCard'
 import { Link } from 'react-router-dom'
-import { getCharacters, setScrollPosition } from '../reducers/charactersSlice'
-import { useAppDispatch, useAppSelector } from '../hooks/reduxHooks'
-import { Spinner } from './UIComonents'
+import { getCharacters, setScrollPosition } from '../../reducers/charactersSlice'
+import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
+import { Spinner } from '../UIComonents'
 
 type ListProps = {
     filterValue : string
@@ -51,7 +51,7 @@ export function CharacterList (props : ListProps) {
   }
 
   return (
-        <div>
+        <div data-testid='character-list'>
             {
               listedCharacters.map(el => {
                 const isCharacter : boolean = filterItem(el, props)

@@ -1,4 +1,4 @@
-import { CharactersType } from './CharacterUI'
+import { CharactersType } from '../CharacterUI'
 
 export const listStyles = {
   display: 'flex',
@@ -8,7 +8,7 @@ export const listStyles = {
 
 export function CharacterCardInfo (props: { character: CharactersType }) {
   return (
-    <div>
+    <div data-testid='character-card-info'>
       <h1>{props.character.name}</h1>
       <p>
         <span

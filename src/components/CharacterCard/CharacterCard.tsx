@@ -1,10 +1,10 @@
-import { CharactersType } from './CharacterUI'
-import { CharacterCardInfo } from './CharacterCardInfo'
-import '../styles/Character.css'
+import { CharactersType } from '../CharacterUI'
+import { CharacterCardInfo } from '../CharacterCardInfo/CharacterCardInfo'
+import '../../styles/Character.css'
 
 export function CharacterCard (props: CharactersType) {
   return (
-    <div className="character">
+    <div className="character" data-testid='character-card'>
       <div>
         <img className="character-image" src={props.image} alt={props.name} />
       </div>

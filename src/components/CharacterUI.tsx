@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import '../styles/CharacterList.css'
 import { ErrorModal, FilterBar, LoadMoreButton, SearchBar } from './UIComonents'
-import { CharacterList } from './CharacterList'
+import { CharacterList } from './CharacterList/CharacterList'
 import { useAppDispatch, useAppSelector } from '../hooks/reduxHooks'
 import { clearErrorState, getMoreCharacters, getPages, getPagesWithWrongEndpoint, setScrollPosition } from '../reducers/charactersSlice'
 import { Button } from '@mui/material'
