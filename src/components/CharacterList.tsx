@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { CharactersType } from './CharacterUI'
-import { CharacterCard } from './Character'
+import { CharacterCard } from './CharacterCard'
 import { Link } from 'react-router-dom'
 import { getCharacters, setScrollPosition } from '../reducers/charactersSlice'
 import { useAppDispatch, useAppSelector } from '../hooks/reduxHooks'

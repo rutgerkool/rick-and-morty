@@ -6,7 +6,6 @@ import { useAppDispatch } from '../hooks/reduxHooks'
 import { clearSearchResults, getCharactersByName, setLoadingState } from '../reducers/charactersSlice'
 import { useDispatch } from 'react-redux'
 import RingLoader from 'react-spinners/RingLoader'
-import { CharactersType } from './CharacterUI'
 
 const buttonStyles = {
   display: 'block',
