@@ -59,6 +59,7 @@ export function CharacterList (props : ListProps) {
                 return (
                       <div
                           key={el.id}
+                          data-testid='character-item'
                           className='character-item'
                           style={{
                             display: 'flex',

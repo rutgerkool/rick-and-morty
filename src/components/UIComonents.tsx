@@ -70,6 +70,7 @@ export function BackButton () {
 export function Spinner () {
   return (
     <div
+        data-testid='spinner'
         style={{
           display: 'flex',
           justifyContent: 'center',

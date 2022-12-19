@@ -1,49 +1,25 @@
 import { render, screen } from '@testing-library/react'
-import { CharactersType } from '../CharacterUI'
+import { useAppSelector } from '../../hooks/reduxHooks'
+import { mockCharacters } from '../../utils/testUtils'
 import { CharacterList } from './CharacterList'
 
 interface MockComponentProps {
   children: React.ReactNode
 }
 
-const mockedCharacter = ({
-  id: 1,
-  name: 'Rick Sanchez',
-  status: 'Alive',
-  species: 'Human',
-  type: undefined,
-  gender: 'Male',
-  origin: {
-    name: 'Earth (C-137)',
-    url: 'https://rickandmortyapi.com/api/location/1'
-
-  },
-  location: {
-    name: 'Citadel of Ricks',
-    url: 'https://rickandmortyapi.com/api/location/3'
-
-  },
-  image: 'https://rickandmortyapi.com/api/character/avatar/1.jpeg',
-  episode: [
-    'https://rickandmortyapi.com/api/episode/1',
-    'https://rickandmortyapi.com/api/episode/2',
-    'https://rickandmortyapi.com/api/episode/3'
-  ],
-  url: 'https://rickandmortyapi.com/api/character/1',
-  created: '2017-11-04T18:48:46.250Z'
-} as unknown) as CharactersType
-
 const mockedReduxProps = {
-  entities: [mockedCharacter],
+  entities: mockCharacters,
   searchedEntities: [],
   loading: false
 }
 
 jest.mock('../../hooks/reduxHooks', () => ({
   ...jest.requireActual('../../hooks/reduxHooks'),
-  useAppDispatch: () => () => {},
-  useAppSelector: () => mockedReduxProps
+  useAppSelector: jest.fn(() => {}),
+  useAppDispatch: () => () => {}
 }))
+
+const mockUseAppSelector = useAppSelector as jest.MockedFunction<typeof useAppSelector>
 
 jest.mock('react-router-dom', () => ({
   Link: ({ children }: MockComponentProps) => {
@@ -62,9 +38,23 @@ describe('CharacterList', () => {
     shouldReloadPage: false
   }
 
-  it('should render a character with the correct property values', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+    mockUseAppSelector.mockReturnValue(mockedReduxProps)
+  })
+
+  it('should render all characters that are returned from the redux store', () => {
     render(<CharacterList {...mockedListProps} />)
 
     expect(screen.getByTestId('character-list')).toBeInTheDocument()
+    expect(screen.getAllByTestId('character-item')).toHaveLength(3)
+  })
+
+  it('should render a spinner if the application is in a loading state', () => {
+    mockUseAppSelector.mockImplementation(() => ({ ...mockedReduxProps, loading: true }))
+    render(<CharacterList {...mockedListProps} />)
+
+    expect(screen.getByTestId('spinner')).toBeInTheDocument()
+    expect(screen.queryByTestId('character-list')).not.toBeInTheDocument()
   })
 })
