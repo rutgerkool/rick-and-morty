@@ -1,13 +1,17 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { CharactersType } from './CharacterUI'
 import { CharacterCard } from './Character'
 import { Link } from 'react-router-dom'
-import { getCharacters } from '../reducers/charactersSlice'
+import { getCharacters, setScrollPosition } from '../reducers/charactersSlice'
 import { useAppDispatch, useAppSelector } from '../hooks/reduxHooks'
+import { Spinner } from './UIComonents'
 
 type ListProps = {
-    filterValue : string;
-    firstLetter : boolean;
+    filterValue : string
+    firstLetter : boolean
+    numberOfPages : number
+    pageNumber: number
+    shouldReloadPage: boolean
 }
 
 export function filterItem (el : CharactersType, props : ListProps) : boolean {
@@ -21,19 +25,35 @@ export function filterItem (el : CharactersType, props : ListProps) : boolean {
 
 export function CharacterList (props : ListProps) {
   const dispatch = useAppDispatch()
-  const charactersFromStore = useAppSelector(state => state.characters.entities)
-  const charactersLoadingFromStore = useAppSelector(state => state.characters.loading)
+  const [listedCharacters, setListedCharacters] = useState<CharactersType[]>([])
+  const {
+    entities: charactersFromStore,
+    searchedEntities: searchedCharactersFromStore,
+    loading: charactersLoadingFromStore
+  } = useAppSelector(state => state.characters)
 
   useEffect(() => {
-    dispatch(getCharacters())
-  }, [])
+    dispatch(getCharacters(props.pageNumber))
+  }, [props.pageNumber])
 
-  if (charactersLoadingFromStore) return <p>Loading...</p>
+  useEffect(() => {
+    if (searchedCharactersFromStore.length > 0) {
+      setListedCharacters(searchedCharactersFromStore)
+    } else {
+      setListedCharacters(charactersFromStore)
+    }
+  }, [charactersFromStore, searchedCharactersFromStore])
+
+  if (charactersLoadingFromStore) {
+    return (
+      <Spinner />
+    )
+  }
 
   return (
         <div>
             {
-              charactersFromStore.map(el => {
+              listedCharacters.map(el => {
                 const isCharacter : boolean = filterItem(el, props)
                 if (!isCharacter) return null
                 return (
@@ -45,6 +65,7 @@ export function CharacterList (props : ListProps) {
                             justifyContent: 'center'
                           }}>
                           <Link
+                              onClick={() => dispatch(setScrollPosition(window.scrollY))}
                               className='navlink'
                               to={`/${el.id}`}
                           >

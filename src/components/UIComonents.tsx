@@ -1,5 +1,12 @@
-import React, { ChangeEvent } from 'react'
-import { Button, ButtonGroup, TextField } from '@mui/material'
+import React, { ChangeEvent, useState } from 'react'
+import { Button, ButtonGroup, Snackbar, Stack, TextField } from '@mui/material'
+import Alert from '@mui/material/Alert'
+import { useNavigate } from 'react-router-dom'
+import { useAppDispatch } from '../hooks/reduxHooks'
+import { clearSearchResults, getCharactersByName, setLoadingState } from '../reducers/charactersSlice'
+import { useDispatch } from 'react-redux'
+import RingLoader from 'react-spinners/RingLoader'
+import { CharactersType } from './CharacterUI'
 
 const buttonStyles = {
   display: 'block',
@@ -13,14 +20,43 @@ type FilterProps = {
             filterValue: string;
             firstLetter: boolean;
         }>>
+    setPageNumber:
+      React.Dispatch<React.SetStateAction<{
+        pageNumber: number
+  }>>
+  numberOfPages: number
+}
+
+export function ErrorModal (props: {isOpenFirstTime: boolean, statusMessage?: string[]}) {
+  const [open, setOpen] = useState(props.isOpenFirstTime)
+
+  return (
+  <Snackbar
+    open={open}
+    onClose={() => setOpen(false)}
+    autoHideDuration={5000}
+    anchorOrigin={{
+      vertical: 'bottom',
+      horizontal: 'center'
+    }}
+    ContentProps={{
+      'aria-describedby': 'message-id'
+    }}
+  >
+    <Stack direction={{ xs: 'column' }}>
+      {props.statusMessage ? props.statusMessage.map((message, i) => (<Alert onClose={() => setOpen(false)} key={i} variant="filled" severity="error">{message}</Alert>)) : null}
+  </Stack>
+</Snackbar>
+  )
 }
 
 export function BackButton () {
+  const navigate = useNavigate()
   return (
         <div className='back-button'>
             <Button
                 variant='contained'
-                href='/'
+                onClick={() => navigate('/')}
                 size='small'
                 sx={{
                   width: '2vw'
@@ -32,8 +68,30 @@ export function BackButton () {
   )
 }
 
+export function Spinner () {
+  return (
+    <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          marginBottom: 20,
+          paddingBottom: 20
+        }}>
+        <RingLoader
+          color={'blue'}
+          loading={true}
+          size={100}
+          aria-label="Loading Spinner"
+          data-testid="loader"
+        />
+      </div>
+  )
+}
+
 export function FilterBar (props : FilterProps) {
-  const alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('')
+  const dispatch = useDispatch()
+  const pageNumbers = []
+  for (let i = 1; i <= props.numberOfPages; i++) pageNumbers.push(i)
 
   return (
         <div className='filter-bar'>
@@ -44,7 +102,7 @@ export function FilterBar (props : FilterProps) {
                   ...buttonStyles
                 }}
             >
-                {alphabet.map(el =>
+                {pageNumbers.map(el =>
                     <Button
                         key={el}
                         size='small'
@@ -53,8 +111,9 @@ export function FilterBar (props : FilterProps) {
                         }}
                         onClick={e => {
                           e.preventDefault()
-                          props.setFilterValue({ filterValue: el.toLowerCase(), firstLetter: true })
-                        }}>{el}
+                          dispatch(clearSearchResults())
+                          props.setPageNumber({ pageNumber: el })
+                        }}>{el.toString()}
                     </Button>
                 )}
             </ButtonGroup>
@@ -62,10 +121,40 @@ export function FilterBar (props : FilterProps) {
   )
 }
 
-export function SearchBar (props : FilterProps) {
+export function LoadMoreButton (props: {getMoreCharacters: () => void}) {
+  return (
+    <Button
+      onClick={e => {
+        e.preventDefault()
+        props.getMoreCharacters()
+      }}
+    >
+      Load more
+    </Button>
+  )
+}
+
+function sleep (ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
+
+export function SearchBar () {
+  const dispatch = useAppDispatch()
+
   function handleSearchEvent (e : ChangeEvent<HTMLInputElement>) {
+    dispatch(getCharactersByName(e.target.value.toLowerCase()))
+  }
+
+  const handleOnChange = async (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault()
-    props.setFilterValue({ filterValue: e.target.value.toLowerCase(), firstLetter: false })
+    const searchValue = e.target.value.toLowerCase()
+    if (searchValue === '') {
+      dispatch(setLoadingState(false))
+      return dispatch(clearSearchResults())
+    }
+    dispatch(setLoadingState(true))
+    await sleep(1000)
+    if (searchValue === e.target.value.toLowerCase()) handleSearchEvent(e)
   }
 
   return (
@@ -77,7 +166,7 @@ export function SearchBar (props : FilterProps) {
               backgroundColor: 'lightgrey',
               ...buttonStyles,
               borderRadius: 5
-            }} label="Search" onChange={handleSearchEvent}/>
+            }} label="Search" onChange={handleOnChange}/>
         </div>
   )
 }

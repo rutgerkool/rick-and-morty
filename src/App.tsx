@@ -1,8 +1,12 @@
 import { CharacterUI } from './components/CharacterUI'
 import { Routes, Route } from 'react-router-dom'
 import { CharacterPage } from './components/CharacterPage'
+import { ErrorModal } from './components/UIComonents'
+import { useAppSelector } from './hooks/reduxHooks'
 
 function App () {
+  const statusCodeFromStore = useAppSelector(state => state.characters.errorMessage)
+
   return (
     <div className="App">
       <Routes>
@@ -11,7 +15,7 @@ function App () {
         }/>
 
         <Route path={'/notFound'} element={
-          <p>Page not found</p>
+          <ErrorModal isOpenFirstTime={true} statusMessage={statusCodeFromStore} />
         }/>
 
         <Route path={'/:charId'} element={
@@ -19,7 +23,7 @@ function App () {
         }/>
 
         <Route path={'*'} element={
-          <p>Page not found</p>
+          <ErrorModal isOpenFirstTime={true} statusMessage={statusCodeFromStore} />
         }/>
 
       </Routes>

@@ -1,17 +1,51 @@
 import { CharactersType } from '../components/CharacterUI'
 
-const getCharacters = async (): Promise<CharactersType[]> => {
-  const url = 'https://rickandmortyapi.com/api/character/'
+const getPagesWithWrongEndpoint = async (): Promise<number> => {
+  const url = 'https://rickandmortyapi.com/api/characterr/'
   const initialResponse = await fetch(url)
+  if (!initialResponse.ok) return Promise.reject(await initialResponse.json())
   const data = await initialResponse.json()
 
+  return data.info.pages
+}
+
+const getPages = async (): Promise<number> => {
+  const url = 'https://rickandmortyapi.com/api/character/'
+  const initialResponse = await fetch(url)
+  if (!initialResponse.ok) return Promise.reject(await initialResponse.json())
+  const data = await initialResponse.json()
+
+  return data.info.pages
+}
+
+const getCharacters = async (pageNumber: number): Promise<CharactersType[]> => {
   const characters = []
-  for (let i = 1; i <= data.info.pages; i++) {
-    const charactersResponse = await fetch(`https://rickandmortyapi.com/api/character/?page=${i}`)
-    const partialCharacters = await charactersResponse.json()
-    characters.push(...partialCharacters.results)
-  }
+
+  const charactersResponse = await fetch(`https://rickandmortyapi.com/api/character/?page=${pageNumber}`)
+  if (!charactersResponse.ok) return Promise.reject(await charactersResponse.json())
+  const partialCharacters = await charactersResponse.json()
+  characters.push(...partialCharacters.results)
   return characters
+}
+
+const getCharactersByName = async (characterName: string): Promise<CharactersType[]> => {
+  const characters = []
+
+  const charactersResponse = await fetch(`https://rickandmortyapi.com/api/character/?name=${characterName}`)
+  if (!charactersResponse.ok) return Promise.reject(await charactersResponse.json())
+  const partialCharacters = await charactersResponse.json()
+  characters.push(...partialCharacters.results)
+  return characters
+}
+
+const getCharacter = async (characterID: string): Promise<CharactersType[]> => {
+  const characterResponse = await fetch(`https://rickandmortyapi.com/api/character/${characterID}`)
+  if (!characterResponse.ok) {
+    if (!characterResponse.ok) return Promise.reject(await characterResponse.json())
+  }
+  const character = await characterResponse.json()
+
+  return [character]
 }
 
 const getEpisodes = async (character: CharactersType | null): Promise<string[]> => {
@@ -27,6 +61,10 @@ const getEpisodes = async (character: CharactersType | null): Promise<string[]> 
 }
 
 export const Api = {
+  getPagesWithWrongEndpoint,
+  getPages,
   getCharacters,
+  getCharactersByName,
+  getCharacter,
   getEpisodes
 }

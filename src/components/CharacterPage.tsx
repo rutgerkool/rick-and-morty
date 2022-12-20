@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
+import { useParams } from 'react-router-dom'
 import { List, ListItem } from '@mui/material'
-import { BackButton } from './UIComonents'
+import { BackButton, Spinner } from './UIComonents'
 import { CharactersType } from './CharacterUI'
 import { listStyles, CharacterCardInfo } from './Character'
-import { Api } from '../utils/api'
+import { useAppDispatch, useAppSelector } from '../hooks/reduxHooks'
+import { getCharacter, getEpisodes } from '../reducers/charactersSlice'
 
 type CharacterPageProps = {
     character: CharactersType;
@@ -72,51 +73,52 @@ function CharacterPageInfo (props : CharacterPageProps) {
 }
 
 export function CharacterPage () {
+  const dispatch = useAppDispatch()
+  const {
+    entity: characterFromStore,
+    loading: characterLoadingFromStore,
+    isInErrorState: characterRejectedFromStore,
+    episodes: episodesFromStore,
+    episodesLoading: episodesLoadingFromStore
+  } = useAppSelector(state => state.characters)
   const params = useParams()
-  const navigate = useNavigate()
-  const [character, setCharacter] = useState<CharactersType|null>(null)
-
-  const [episodes, setEpisodes] = useState<string[]>([])
 
   useEffect(() => {
-    const url = `https://rickandmortyapi.com/api/character/${params.charId}`
-    fetch(url).then(response => response.json()).then(data => {
-      data && data.id ? setCharacter(data) : navigate('/notFound')
-    })
+    if (params.charId) {
+      dispatch(getCharacter(params.charId))
+    }
   }, [])
 
   useEffect(() => {
-    const fetchEpisodes = async () => {
-      try {
-        const episodes = await Api.getEpisodes(character)
-        setEpisodes(episodes)
-      } catch (error) {
-        console.log(`Error: ${error}`)
-      }
-    }
-    fetchEpisodes()
-  }, [character])
+    if (!characterLoadingFromStore && characterFromStore.length !== 0) dispatch(getEpisodes(characterFromStore[0]))
+  }, [characterLoadingFromStore])
 
-  if (!character) return null
+  if (characterRejectedFromStore) {
+    return <p>Not found</p>
+  } else if (characterLoadingFromStore || characterFromStore.length === 0 || episodesLoadingFromStore || episodesFromStore.length === 0) {
+    return (
+      <Spinner />
+    )
+  } else {
+    return (
+      <div>
+          <>
+              <div className='character-page' style={{
+                ...listStyles
+              }}>
+                  <div>
+                      <img src={characterFromStore[0].image} alt={characterFromStore[0].name}/>
+                  </div>
+                  <CharacterPageInfo character={characterFromStore[0]} episodes={episodesFromStore}/>
+              </div>
+              <EpisodeList episodes={episodesFromStore}/>
+              <div className='created-text'>
+                  <p>Created: {characterFromStore[0].created}</p>
+              </div>
+              <BackButton />
+          </>
 
-  return (
-        <div>
-            <>
-                <div className='character-page' style={{
-                  ...listStyles
-                }}>
-                    <div>
-                        <img src={character.image} alt={character.name}/>
-                    </div>
-                    <CharacterPageInfo character={character} episodes={episodes}/>
-                </div>
-                <EpisodeList episodes={episodes}/>
-                <div className='created-text'>
-                    <p>Created: {character.created}</p>
-                </div>
-                <BackButton />
-            </>
-
-    </div>
-  )
+  </div>
+    )
+  }
 }
