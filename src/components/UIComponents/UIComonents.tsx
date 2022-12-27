@@ -2,11 +2,9 @@ import React, { ChangeEvent, useState } from 'react'
 import { Button, ButtonGroup, Snackbar, Stack, TextField } from '@mui/material'
 import Alert from '@mui/material/Alert'
 import { useNavigate } from 'react-router-dom'
-import { useAppDispatch } from '../hooks/reduxHooks'
-import { clearSearchResults, getCharactersByName, setLoadingState } from '../reducers/charactersSlice'
-import { useDispatch } from 'react-redux'
+import { useAppDispatch } from '../../hooks/reduxHooks'
+import { clearSearchResults, getCharactersByName, setLoadingState } from '../../reducers/charactersSlice'
 import RingLoader from 'react-spinners/RingLoader'
-import { CharactersType } from './CharacterUI'
 
 const buttonStyles = {
   display: 'block',
@@ -71,6 +69,7 @@ export function BackButton () {
 export function Spinner () {
   return (
     <div
+        data-testid='spinner'
         style={{
           display: 'flex',
           justifyContent: 'center',
@@ -89,7 +88,7 @@ export function Spinner () {
 }
 
 export function FilterBar (props : FilterProps) {
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   const pageNumbers = []
   for (let i = 1; i <= props.numberOfPages; i++) pageNumbers.push(i)
 

@@ -1,4 +1,4 @@
-import { CharactersType } from '../components/CharacterUI'
+import { CharactersType } from '../components/CharacterUI/CharacterUI'
 
 const getPagesWithWrongEndpoint = async (): Promise<number> => {
   const url = 'https://rickandmortyapi.com/api/characterr/'

@@ -8,9 +8,7 @@
     "@mui/material": "^5.10.7",
     "@reduxjs/toolkit": "^1.9.0",
     "@testing-library/jest-dom": "^5.16.5",
-    "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
-    "@types/jest": "^27.5.2",
     "@types/node": "^16.11.62",
     "@types/react": "^18.0.21",
     "@types/react-dom": "^18.0.6",
@@ -48,6 +46,9 @@
     ]
   },
   "devDependencies": {
+    "@testing-library/react": "^13.4.0",
+    "@types/jest": "^29.2.4",
+    "jest": "^27.5.1",
     "react-router-dom": "^6.4.1",
     "standard": "^17.0.0"
   }
