@@ -1,6 +1,7 @@
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
+import { BrowserRouter } from 'react-router-dom'
 import { useAppSelector } from '../../hooks/reduxHooks'
-import { mockCharacters } from '../../utils/testUtils'
+import { mockCharacters } from '../../utils/characterMocks'
 import { CharacterList } from './CharacterList'
 
 interface MockComponentProps {
@@ -21,13 +22,13 @@ jest.mock('../../hooks/reduxHooks', () => ({
 
 const mockUseAppSelector = useAppSelector as jest.MockedFunction<typeof useAppSelector>
 
-jest.mock('react-router-dom', () => ({
-  Link: ({ children }: MockComponentProps) => {
-    return (
-      children
-    )
-  }
-}))
+// jest.mock('react-router-dom', () => ({
+//   Link: ({ children }: MockComponentProps) => {
+//     return (
+//       children
+//     )
+//   }
+// }))
 
 describe('CharacterList', () => {
   const mockedListProps = {
@@ -44,7 +45,11 @@ describe('CharacterList', () => {
   })
 
   it('should render all characters that are returned from the redux store', () => {
-    render(<CharacterList {...mockedListProps} />)
+    render(
+      <BrowserRouter>
+        <CharacterList {...mockedListProps} />
+      </BrowserRouter>
+    )
 
     expect(screen.getByTestId('character-list')).toBeInTheDocument()
     expect(screen.getAllByTestId('character-item')).toHaveLength(3)

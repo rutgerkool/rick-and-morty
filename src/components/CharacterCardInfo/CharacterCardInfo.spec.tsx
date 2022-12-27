@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import { CharacterCardInfo } from './CharacterCardInfo'
-import { mockCharacterRick } from '../../utils/testUtils'
+import { mockCharacterRick } from '../../utils/characterMocks'
 
 describe('CharacterCardInfo', () => {
   it('should render a character with the correct property values', () => {

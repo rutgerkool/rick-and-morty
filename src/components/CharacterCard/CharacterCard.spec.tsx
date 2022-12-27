@@ -3,7 +3,7 @@ import { CharactersType } from '../CharacterUI'
 import { CharacterCard } from './CharacterCard'
 
 describe('CharacterCard', () => {
-  const mockedCharacter = ({
+  const mockedCharacter = {
     id: 1,
     name: 'Rick Sanchez',
     status: 'Alive',
@@ -28,7 +28,7 @@ describe('CharacterCard', () => {
     ],
     url: 'https://rickandmortyapi.com/api/character/1',
     created: '2017-11-04T18:48:46.250Z'
-  } as unknown) as CharactersType
+  } as CharactersType
 
   it('should render a character with the correct property values', () => {
     render(<CharacterCard {...mockedCharacter} />)

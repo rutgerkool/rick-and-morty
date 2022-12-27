@@ -1,6 +1,6 @@
 import { CharactersType } from '../components/CharacterUI'
 
-export const mockCharacterRick = ({
+export const mockCharacterRick = {
   id: 1,
   name: 'Rick Sanchez',
   status: 'Alive',
@@ -25,9 +25,9 @@ export const mockCharacterRick = ({
   ],
   url: 'https://rickandmortyapi.com/api/character/1',
   created: '2017-11-04T18:48:46.250Z'
-} as unknown) as CharactersType
+} as CharactersType
 
-const mockCharacterMorty = ({
+const mockCharacterMorty = {
   id: 2,
   name: 'Morty Smith',
   status: 'Alive',
@@ -50,9 +50,9 @@ const mockCharacterMorty = ({
   ],
   url: 'https://rickandmortyapi.com/api/character/2',
   created: '2017-11-04T18:50:21.651Z'
-} as unknown) as CharactersType
+} as CharactersType
 
-const mockCharacterSummer = ({
+const mockCharacterSummer = {
   id: 3,
   name: 'Summer Smith',
   status: 'Alive',
@@ -75,7 +75,7 @@ const mockCharacterSummer = ({
   ],
   url: 'https://rickandmortyapi.com/api/character/3',
   created: '2017-11-04T19:09:56.428Z'
-} as unknown) as CharactersType
+} as CharactersType
 
 export const mockCharacters = [
   mockCharacterRick,
