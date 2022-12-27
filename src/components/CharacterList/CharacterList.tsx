@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
-import { CharactersType } from '../CharacterUI'
+import { CharactersType } from '../CharacterUI/CharacterUI'
 import { CharacterCard } from '../CharacterCard/CharacterCard'
 import { Link } from 'react-router-dom'
 import { getCharacters, setScrollPosition } from '../../reducers/charactersSlice'
 import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
-import { Spinner } from '../UIComonents'
+import { Spinner } from '../UIComponents/UIComonents'
 
 type ListProps = {
     filterValue : string

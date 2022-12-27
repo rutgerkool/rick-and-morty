@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react'
-import { CharactersType } from '../CharacterUI'
+import { CharactersType } from '../CharacterUI/CharacterUI'
 import { CharacterCard } from './CharacterCard'
 
 describe('CharacterCard', () => {

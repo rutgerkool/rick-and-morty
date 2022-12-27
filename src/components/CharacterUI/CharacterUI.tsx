@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
-import '../styles/CharacterList.css'
-import { ErrorModal, FilterBar, LoadMoreButton, SearchBar } from './UIComonents'
-import { CharacterList } from './CharacterList/CharacterList'
-import { useAppDispatch, useAppSelector } from '../hooks/reduxHooks'
-import { clearErrorState, getMoreCharacters, getPages, getPagesWithWrongEndpoint, setScrollPosition } from '../reducers/charactersSlice'
+import '../../styles/CharacterList.css'
+import { ErrorModal, FilterBar, LoadMoreButton, SearchBar } from '../UIComponents/UIComonents'
+import { CharacterList } from '../CharacterList/CharacterList'
+import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
+import { clearErrorState, getMoreCharacters, getPages, getPagesWithWrongEndpoint, setScrollPosition } from '../../reducers/charactersSlice'
 import { Button } from '@mui/material'
 
 export type CharactersType = {
@@ -57,7 +57,7 @@ export function CharacterUI () {
         <div className='page-container'>
             <img
                 className='logo'
-                src={require('../pictures/Rick-And-Morty-Logo.png')}
+                src={require('../../pictures/Rick-And-Morty-Logo.png')}
                 alt={'logo'}
             />
             <FilterBar setFilterValue={setFilterValue} setPageNumber={setPageNumber} numberOfPages={pagesFromStore}/>

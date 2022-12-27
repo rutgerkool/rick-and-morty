@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, createAction } from '@reduxjs/toolkit'
 import { Api } from '../utils/api'
-import { CharactersType } from '../components/CharacterUI'
+import { CharactersType } from '../components/CharacterUI/CharacterUI'
 interface ThunkError {
   error: string
 }

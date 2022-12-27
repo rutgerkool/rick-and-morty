@@ -1,7 +1,7 @@
-import { CharacterUI } from './components/CharacterUI'
+import { CharacterUI } from './components/CharacterUI/CharacterUI'
 import { Routes, Route } from 'react-router-dom'
-import { CharacterPage } from './components/CharacterPage'
-import { ErrorModal } from './components/UIComonents'
+import { CharacterPage } from './components/CharacterPage/CharacterPage'
+import { ErrorModal } from './components/UIComponents/UIComonents'
 import { useAppSelector } from './hooks/reduxHooks'
 
 function App () {

@@ -1,4 +1,4 @@
-import { CharactersType } from '../CharacterUI'
+import { CharactersType } from '../CharacterUI/CharacterUI'
 
 export const listStyles = {
   display: 'flex',

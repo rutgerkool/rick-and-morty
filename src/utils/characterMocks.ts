@@ -1,4 +1,4 @@
-import { CharactersType } from '../components/CharacterUI'
+import { CharactersType } from '../components/CharacterUI/CharacterUI'
 
 export const mockCharacterRick = {
   id: 1,

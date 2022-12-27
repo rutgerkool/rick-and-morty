@@ -1,11 +1,11 @@
 import { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { List, ListItem } from '@mui/material'
-import { BackButton, Spinner } from './UIComonents'
-import { CharactersType } from './CharacterUI'
-import { listStyles, CharacterCardInfo } from './CharacterCardInfo/CharacterCardInfo'
-import { useAppDispatch, useAppSelector } from '../hooks/reduxHooks'
-import { getCharacter, getEpisodes } from '../reducers/charactersSlice'
+import { BackButton, Spinner } from '../UIComponents/UIComonents'
+import { CharactersType } from '../CharacterUI/CharacterUI'
+import { listStyles, CharacterCardInfo } from '../CharacterCardInfo/CharacterCardInfo'
+import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
+import { getCharacter, getEpisodes } from '../../reducers/charactersSlice'
 
 type CharacterPageProps = {
     character: CharactersType;

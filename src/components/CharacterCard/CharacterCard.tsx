@@ -1,4 +1,4 @@
-import { CharactersType } from '../CharacterUI'
+import { CharactersType } from '../CharacterUI/CharacterUI'
 import { CharacterCardInfo } from '../CharacterCardInfo/CharacterCardInfo'
 import '../../styles/Character.css'
 
