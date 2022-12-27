@@ -1,12 +1,8 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
 import { useAppSelector } from '../../hooks/reduxHooks'
 import { mockCharacters } from '../../utils/characterMocks'
 import { CharacterList } from './CharacterList'
-
-interface MockComponentProps {
-  children: React.ReactNode
-}
 
 const mockedReduxProps = {
   entities: mockCharacters,
@@ -21,14 +17,6 @@ jest.mock('../../hooks/reduxHooks', () => ({
 }))
 
 const mockUseAppSelector = useAppSelector as jest.MockedFunction<typeof useAppSelector>
-
-// jest.mock('react-router-dom', () => ({
-//   Link: ({ children }: MockComponentProps) => {
-//     return (
-//       children
-//     )
-//   }
-// }))
 
 describe('CharacterList', () => {
   const mockedListProps = {

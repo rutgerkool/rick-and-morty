@@ -70,7 +70,6 @@ export function CharacterList (props : ListProps) {
                               className='navlink'
                               to={`/${el.id}`}
                           >
-                              Test
                               <CharacterCard {...el}></CharacterCard>
                           </Link>
                       </div>

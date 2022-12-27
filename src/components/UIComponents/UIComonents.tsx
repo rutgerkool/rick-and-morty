@@ -4,7 +4,6 @@ import Alert from '@mui/material/Alert'
 import { useNavigate } from 'react-router-dom'
 import { useAppDispatch } from '../../hooks/reduxHooks'
 import { clearSearchResults, getCharactersByName, setLoadingState } from '../../reducers/charactersSlice'
-import { useDispatch } from 'react-redux'
 import RingLoader from 'react-spinners/RingLoader'
 
 const buttonStyles = {
@@ -89,7 +88,7 @@ export function Spinner () {
 }
 
 export function FilterBar (props : FilterProps) {
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   const pageNumbers = []
   for (let i = 1; i <= props.numberOfPages; i++) pageNumbers.push(i)
 
