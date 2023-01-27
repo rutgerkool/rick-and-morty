@@ -3,7 +3,7 @@ import { Button, ButtonGroup, Snackbar, Stack, TextField } from '@mui/material'
 import Alert from '@mui/material/Alert'
 import { useNavigate } from 'react-router-dom'
 import { useAppDispatch } from '../../hooks/reduxHooks'
-import { clearSearchResults, getCharactersByName, setLoadingState } from '../../reducers/charactersSlice'
+import { clearSearchResults, getCharactersByName, setLoadingState, setScrollPosition } from '../../reducers/charactersSlice'
 import RingLoader from 'react-spinners/RingLoader'
 
 const buttonStyles = {
@@ -110,6 +110,7 @@ export function FilterBar (props : FilterProps) {
                         }}
                         onClick={e => {
                           e.preventDefault()
+                          dispatch(setScrollPosition(window.scrollY))
                           dispatch(clearSearchResults())
                           props.setPageNumber({ pageNumber: el })
                         }}>{el.toString()}

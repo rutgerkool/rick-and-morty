@@ -14,6 +14,7 @@ export function CharacterCard (props: CharactersType) {
           padding: 10
         }}
       >
+        <h1>{props.name}</h1>
         <CharacterCardInfo character={props} />
       </div>
     </div>

@@ -20,6 +20,13 @@ export type CharactersType = {
     created: string;
 }
 
+export type EpisodeType = {
+  air_date: string,
+  created: string,
+  name: string,
+  episode: string
+}
+
 export function CharacterUI () {
   const dispatch = useAppDispatch()
   const {
@@ -62,13 +69,6 @@ export function CharacterUI () {
             />
             <FilterBar setFilterValue={setFilterValue} setPageNumber={setPageNumber} numberOfPages={pagesFromStore}/>
             <SearchBar />
-            <Button
-              sx={{
-                margin: 2
-              }}
-              onClick={() => {
-                dispatch(getPagesWithWrongEndpoint())
-              }}>Create error</Button>
             <CharacterList
                 filterValue={filterValue}
                 firstLetter={firstLetter}
