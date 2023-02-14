@@ -40,6 +40,7 @@ function EpisodeList ({ episodes }: EpisodeProps) {
               ? episodes.map((el, i) =>
                 (<Grid
                   item
+                  key={i}
                   xs={1}
                   onClick={() => {
                     setSelectedEpisode(i)
@@ -48,6 +49,7 @@ function EpisodeList ({ episodes }: EpisodeProps) {
                   >
                 <Paper
                 className='episode-card'
+                data-testid='episode-card'
                 style={{
                   backgroundColor: '#484848',
                   borderStyle: 'solid',

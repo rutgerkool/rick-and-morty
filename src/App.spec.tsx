@@ -48,7 +48,7 @@ describe('<App />', () => {
     expect(screen.getByRole('heading', { name: /Rick Sanchez/i })).toBeInTheDocument()
     expect(screen.getByRole('img')).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: /Episodes/i })).toBeInTheDocument()
-    expect(screen.getAllByRole('listitem')).toHaveLength(3)
+    expect(screen.getAllByTestId('episode-card')).toHaveLength(3)
     expect(screen.getByText(/created/i)).toBeInTheDocument()
   })
 })

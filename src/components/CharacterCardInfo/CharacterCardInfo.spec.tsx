@@ -7,6 +7,6 @@ describe('CharacterCardInfo', () => {
     render(<CharacterCardInfo character={mockCharacterRick} />)
 
     expect(screen.getByTestId('character-card-info')).toBeInTheDocument()
-    expect(screen.getByText('Rick Sanchez')).toBeVisible()
+    expect(screen.getByText(/Human/)).toBeVisible()
   })
 })
