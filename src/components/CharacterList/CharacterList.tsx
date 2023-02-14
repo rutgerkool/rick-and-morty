@@ -33,7 +33,7 @@ export function CharacterList (props : ListProps) {
   } = useAppSelector(state => state.characters)
 
   useEffect(() => {
-    dispatch(getCharacters(props.pageNumber))
+    if (charactersFromStore.length <= 20) { dispatch(getCharacters(props.pageNumber)) }
   }, [props.pageNumber])
 
   useEffect(() => {

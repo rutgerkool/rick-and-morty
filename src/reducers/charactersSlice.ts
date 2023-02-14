@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, createAction } from '@reduxjs/toolkit'
 import { Api } from '../utils/api'
-import { CharactersType } from '../components/CharacterUI/CharacterUI'
+import { CharactersType, EpisodeType } from '../components/CharacterUI/CharacterUI'
 interface ThunkError {
   error: string
 }
@@ -78,14 +78,14 @@ export const getCharacter = createAsyncThunk<CharactersType[], string, {rejectVa
   }
 )
 
-export const getEpisodes = createAsyncThunk<string[], CharactersType, {rejectValue: ThunkError}>(
+export const getEpisodes = createAsyncThunk<EpisodeType[], CharactersType, {rejectValue: ThunkError}>(
   'characters/getEpisodes',
   async (character: CharactersType) => await Api.getEpisodes(character)
 )
 
 type initialStateType = {
   entity: CharactersType[],
-  episodes: string[],
+  episodes: EpisodeType[],
   entities: CharactersType[]
   searchedEntities: CharactersType[]
   loading: boolean
@@ -154,8 +154,9 @@ export const charactersSlice = createSlice({
       state.isInErrorState = false
       state.searchedEntities = action.payload
     })
-    builder.addCase(getCharactersByName.rejected, (state) => {
+    builder.addCase(getCharactersByName.rejected, (state, action) => {
       state.loading = false
+      if (action.payload) state.errorMessage = [action.payload.error]
       state.isInErrorState = true
     })
     builder.addCase(getCharacter.pending, (state) => {
@@ -180,7 +181,7 @@ export const charactersSlice = createSlice({
     builder.addCase(getEpisodes.fulfilled, (state, action) => {
       state.episodesLoading = false
       state.isInErrorState = false
-      state.episodes = action.payload
+      state.episodes = state.episodes.concat(action.payload)
     })
     builder.addCase(getEpisodes.rejected, (state, action) => {
       state.episodesLoading = true

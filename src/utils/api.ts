@@ -1,4 +1,4 @@
-import { CharactersType } from '../components/CharacterUI/CharacterUI'
+import { CharactersType, EpisodeType } from '../components/CharacterUI/CharacterUI'
 
 const getPagesWithWrongEndpoint = async (): Promise<number> => {
   const url = 'https://rickandmortyapi.com/api/characterr/'
@@ -48,12 +48,12 @@ const getCharacter = async (characterID: string): Promise<CharactersType[]> => {
   return [character]
 }
 
-const getEpisodes = async (character: CharactersType | null): Promise<string[]> => {
-  const episodes: string[] = []
+const getEpisodes = async (character: CharactersType | null): Promise<EpisodeType[]> => {
+  const episodes: EpisodeType[] = []
   if (character) {
     for (let i = 0; i < character.episode.length; i++) {
       await fetch(character.episode[i]).then(response => response.json()).then(data => {
-        episodes.push(data.name)
+        episodes.push(data)
       })
     }
   }

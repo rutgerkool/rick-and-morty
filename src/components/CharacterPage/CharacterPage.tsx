@@ -1,61 +1,109 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { List, ListItem } from '@mui/material'
+import { Box, Button, Dialog, Grid, Paper, styled } from '@mui/material'
+import ClickAwayListener from '@mui/base/ClickAwayListener'
 import { BackButton, Spinner } from '../UIComponents/UIComonents'
-import { CharactersType } from '../CharacterUI/CharacterUI'
+import { CharactersType, EpisodeType } from '../CharacterUI/CharacterUI'
 import { listStyles, CharacterCardInfo } from '../CharacterCardInfo/CharacterCardInfo'
 import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
 import { getCharacter, getEpisodes } from '../../reducers/charactersSlice'
+import '../../styles/Character.css'
 
 type CharacterPageProps = {
     character: CharactersType;
-    episodes : string[];
+    episodes : EpisodeType[];
 }
 
 type EpisodeProps = {
-    episodes : string[];
+    episodes : EpisodeType[];
 }
 
-function EpisodeList (props: EpisodeProps) {
+function EpisodeList ({ episodes }: EpisodeProps) {
+  const [dialogIsOpen, setDialogIsOpen] = useState<boolean>(false)
+  const [selectedEpisode, setSelectedEpisode] = useState<number>(0)
+
   return (
-        <div style={{
-          flexDirection: 'column',
-          ...listStyles
-        }}>
-            <div className='episode-title'>
-                <h2>Episodes</h2>
-            </div>
-            <List className='episode-list'
-                sx={{
-                  bgcolor: 'background.paper',
-                  overflow: 'auto',
-                  maxHeight: 300,
-                  '& ul': { padding: 0 },
-                  borderRadius: 5,
-                  backgroundColor: 'lightgrey',
-                  fontSize: 'min(20px, 2vw)'
-                }}
-                >
-                {props.episodes
-                  ? props.episodes.map((el, i) => {
-                    return <ListItem key={i}>{el}</ListItem>
-                  })
-                  : null}
-            </List>
-        </div>
+    <div
+      style={{
+        margin: '10%'
+      }}
+    >
+      <div className='episode-title'>
+        <h2>Episodes</h2>
+    </div>
+      <Grid
+              container
+              spacing={2}
+              columns={4}
+            >
+            {episodes
+              ? episodes.map((el, i) =>
+                (<Grid
+                  item
+                  xs={1}
+                  onClick={() => {
+                    setSelectedEpisode(i)
+                    setDialogIsOpen(true)
+                  }}
+                  >
+                <Paper
+                className='episode-card'
+                style={{
+                  backgroundColor: '#484848',
+                  borderStyle: 'solid',
+                  borderColor: '#0e324b',
+                  padding: 20,
+                  textAlign: 'center'
+                }}><p>{el.episode}</p></Paper>
+              </Grid>)
+              )
+              : null}
+        </Grid>
+        <Dialog
+        fullWidth={false}
+          style={{
+
+            borderRadius: '25px'
+          }}
+          open={dialogIsOpen}
+        >
+          <ClickAwayListener onClickAway={() => setDialogIsOpen(false)}>
+          <Paper
+            style={{
+              backgroundColor: '#484848',
+              borderStyle: 'solid',
+              borderColor: '#0e324b',
+              padding: 20,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+            <h2 className='episode-details-title'>{episodes[selectedEpisode].name}</h2>
+            <p className='air-date-text '>Air date: {episodes[selectedEpisode].air_date}</p>
+            <p className='created-text'>Created: {episodes[selectedEpisode].created}</p>
+
+            <Button onClick={() => setDialogIsOpen(false)} autoFocus>
+              Close
+            </Button>
+          </Paper>
+          </ClickAwayListener>
+        </Dialog>
+    </div>
   )
 }
 
 function CharacterPageInfo (props : CharacterPageProps) {
   return (
         <div style={{
+          height: 300,
           margin: 10,
           padding: 10
         }}>
             <CharacterCardInfo character={props.character}/>
 
             <p className='subtitle'>First seen in: </p>
-            <p>{props.episodes[0]}</p>
+            <p>{props.episodes[0].episode}</p>
 
             <p className='subtitle'>Gender: </p>
             <p>{props.character.gender}</p>
@@ -102,7 +150,8 @@ export function CharacterPage () {
   } else {
     return (
       <div>
-          <>
+            <>
+              <h2 className='character-page-title'>{characterFromStore[0].name}</h2>
               <div className='character-page' style={{
                 ...listStyles
               }}>
