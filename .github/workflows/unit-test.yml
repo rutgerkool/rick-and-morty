@@ -12,5 +12,5 @@ jobs:
       # and run all Cypress tests
       - name: npm install
         run: npm install
-      - name: Cypress run
+      - name: Unit test run
         run: CI=true npm run test
