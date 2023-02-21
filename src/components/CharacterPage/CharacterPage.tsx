@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { Box, Button, Dialog, Grid, Paper, styled } from '@mui/material'
+import { Button, Dialog, Grid, Paper } from '@mui/material'
 import ClickAwayListener from '@mui/base/ClickAwayListener'
 import { BackButton, Spinner } from '../UIComponents/UIComonents'
 import { CharactersType, EpisodeType } from '../CharacterUI/CharacterUI'
@@ -137,10 +137,12 @@ export function CharacterPage () {
     if (params.charId) {
       dispatch(getCharacter(params.charId))
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
     if (!characterLoadingFromStore && characterFromStore.length !== 0) dispatch(getEpisodes(characterFromStore[0]))
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [characterLoadingFromStore])
 
   if (characterRejectedFromStore) {

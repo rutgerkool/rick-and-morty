@@ -3,8 +3,7 @@ import '../../styles/CharacterList.css'
 import { ErrorModal, FilterBar, LoadMoreButton, SearchBar } from '../UIComponents/UIComonents'
 import { CharacterList } from '../CharacterList/CharacterList'
 import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
-import { clearErrorState, getMoreCharacters, getPages, getPagesWithWrongEndpoint, setScrollPosition } from '../../reducers/charactersSlice'
-import { Button } from '@mui/material'
+import { clearErrorState, getMoreCharacters, getPages, setScrollPosition } from '../../reducers/charactersSlice'
 
 export type CharactersType = {
     id: number,
@@ -47,6 +46,7 @@ export function CharacterUI () {
     return () => {
       dispatch(clearErrorState())
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
@@ -58,6 +58,7 @@ export function CharacterUI () {
     if (characterRejectedFromStore) {
       setShouldReloadPage(!togglePageReload)
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [characterRejectedFromStore])
 
   return (
