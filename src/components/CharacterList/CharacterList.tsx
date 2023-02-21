@@ -34,6 +34,7 @@ export function CharacterList (props : ListProps) {
 
   useEffect(() => {
     if (charactersFromStore.length <= 20) { dispatch(getCharacters(props.pageNumber)) }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.pageNumber])
 
   useEffect(() => {
